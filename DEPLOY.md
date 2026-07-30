@@ -84,8 +84,7 @@ GROQ_PREFERRED_MODEL=llama-3.3-70b-versatile
 GROQ_FALLBACK_MODEL=llama-3.1-8b-instant
 
 # PostgreSQL (Neon) - External Pooled Connection String with SSL required
-DATABASE_URL=postgresql://neondb_owner:npg_W6rVbo7qnSeg@ep-snowy-sunset-awu4zimd.c-12.us-east-1.aws.neon.tech/neondb?sslmode=require
-
+DATABASE_URL=your_db_url
 # Internal Docker Compose Redis Connection (Service name: redis)
 REDIS_URL=redis://redis:6379/0
 
