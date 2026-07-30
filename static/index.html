@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Budget Middleware — Governance Command Center</title>
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">A</div>
+      <div class="brand-text">
+        <h1>Agent Governance</h1>
+        <p>Budget & Policy Control Center</p>
+      </div>
+    </div>
+
+    <ul class="nav-list">
+      <li class="nav-item active">
+        <button onclick="switchTab('command')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          Command Center
+        </button>
+      </li>
+      <li class="nav-item">
+        <button onclick="switchTab('policies')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          Policy & Budget Hub
+        </button>
+      </li>
+      <li class="nav-item">
+        <button onclick="switchTab('sandbox')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Agent Sandbox & Audit
+        </button>
+      </li>
+      <li class="nav-item">
+        <button onclick="switchTab('console')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Developer API Console
+        </button>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-wrapper">
+    <header class="header">
+      <div class="header-title">
+        <h2 id="page-title">Governance Command Center</h2>
+      </div>
+      <div class="header-actions">
+        <div id="health-pill" class="status-pill">
+          <span class="status-dot"></span>
+          <span id="health-text">System Active</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- TAB 1: GOVERNANCE COMMAND CENTER -->
+      <section id="panel-command" class="tab-panel active">
+        
+        <!-- Summary Cards -->
+        <div class="grid-stats">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Total Active Teams</span>
+            </div>
+            <div id="count-teams" class="card-val">0</div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Total Active Agents</span>
+            </div>
+            <div id="count-agents" class="card-val">0</div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Total Recorded Spend</span>
+            </div>
+            <div id="total-spend-val" class="card-val">$0.0000</div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Redis Counter Keys</span>
+            </div>
+            <div id="redis-keys-val" class="card-val">Live</div>
+          </div>
+        </div>
+
+        <!-- Decision Distribution Breakdown -->
+        <div class="card" style="margin-bottom: 2rem;">
+          <h3 style="font-family: 'Outfit'; font-size: 1.1rem; margin-bottom: 1rem;">Policy Decision Analytics</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div class="counter-box">
+              <div>
+                <div class="counter-label" style="color: var(--success);">ALLOW</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Normal Execution</div>
+              </div>
+              <div id="cnt-allow" class="counter-num" style="color: var(--success);">0</div>
+            </div>
+            <div class="counter-box">
+              <div>
+                <div class="counter-label" style="color: var(--warning);">WARN (>=80%)</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Threshold Warning</div>
+              </div>
+              <div id="cnt-warn" class="counter-num" style="color: var(--warning);">0</div>
+            </div>
+            <div class="counter-box">
+              <div>
+                <div class="counter-label" style="color: var(--info);">REROUTE</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Fallback Model</div>
+              </div>
+              <div id="cnt-reroute" class="counter-num" style="color: var(--info);">0</div>
+            </div>
+            <div class="counter-box">
+              <div>
+                <div class="counter-label" style="color: var(--danger);">BLOCK</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Budget Exceeded</div>
+              </div>
+              <div id="cnt-block" class="counter-num" style="color: var(--danger);">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team & Agent Spend Gauges -->
+        <h3 style="font-family: 'Outfit'; font-size: 1.1rem; margin-bottom: 1rem;">Team Monthly Budgets</h3>
+        <div id="teams-grid" class="grid-stats"></div>
+
+        <h3 style="font-family: 'Outfit'; font-size: 1.1rem; margin-bottom: 1rem;">Agent Monthly Budgets</h3>
+        <div id="agents-grid" class="grid-stats"></div>
+      </section>
+
+
+      <!-- TAB 2: POLICY & BUDGET CONFIGURATION HUB -->
+      <section id="panel-policies" class="tab-panel">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          
+          <div class="card">
+            <h3 style="font-family: 'Outfit'; margin-bottom: 1.25rem; font-size: 1.1rem;">Configure Team Monthly Budget</h3>
+            <form id="form-create-team" onsubmit="handleCreateTeam(event)">
+              <div class="form-group">
+                <label>Team Name</label>
+                <input type="text" id="team-name" class="form-control" placeholder="e.g. Core Engineering" required>
+              </div>
+              <div class="form-group">
+                <label>Monthly Budget Limit (USD)</label>
+                <input type="number" step="0.01" id="team-budget" class="form-control" placeholder="500.00" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Save Team Policy</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3 style="font-family: 'Outfit'; margin-bottom: 1.25rem; font-size: 1.1rem;">Configure Agent Monthly Budget</h3>
+            <form id="form-create-agent" onsubmit="handleCreateAgent(event)">
+              <div class="form-group">
+                <label>Team ID</label>
+                <input type="text" id="agent-team-id" class="form-control" placeholder="Paste existing Team UUID" required>
+              </div>
+              <div class="form-group">
+                <label>Agent Name</label>
+                <input type="text" id="agent-name" class="form-control" placeholder="e.g. Code Assistant" required>
+              </div>
+              <div class="form-group">
+                <label>Monthly Budget Limit (USD)</label>
+                <input type="number" step="0.01" id="agent-budget" class="form-control" placeholder="50.00" required>
+              </div>
+              <div class="form-group">
+                <label>Preferred Primary Model</label>
+                <input type="text" id="agent-pref-model" class="form-control" value="llama-3.3-70b-versatile" required>
+              </div>
+              <div class="form-group">
+                <label>Fallback Model (for Over-Budget Reroute)</label>
+                <input type="text" id="agent-fall-model" class="form-control" value="llama-3.1-8b-instant" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Save Agent Policy</button>
+            </form>
+          </div>
+
+        </div>
+
+        <div class="card" style="margin-top: 2rem;">
+          <h3 style="font-family: 'Outfit'; margin-bottom: 1.25rem; font-size: 1.1rem;">Start Active Session Budget Cap</h3>
+          <form id="form-create-session" onsubmit="handleCreateSession(event)" style="display: flex; gap: 1rem; align-items: flex-end;">
+            <div class="form-group" style="flex: 1; margin: 0;">
+              <label>Agent ID</label>
+              <input type="text" id="sess-agent-id" class="form-control" placeholder="Paste Agent UUID" required>
+            </div>
+            <div class="form-group" style="flex: 1; margin: 0;">
+              <label>Per-Session Spend Limit (USD)</label>
+              <input type="number" step="0.01" id="sess-budget" class="form-control" placeholder="2.00" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Start Session</button>
+          </form>
+        </div>
+      </section>
+
+
+      <!-- TAB 3: AGENT SANDBOX & AUDIT LOGS -->
+      <section id="panel-sandbox" class="tab-panel">
+        
+        <!-- 1-Click Preset Shortcuts -->
+        <div class="card" style="margin-bottom: 2rem;">
+          <h3 style="font-family: 'Outfit'; font-size: 1.1rem; margin-bottom: 0.5rem;">1-Click Policy Presets & Simulation Shortcuts</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Click any preset to automatically configure test entities and trigger live governance evaluation:</p>
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <button class="preset-btn" onclick="runPresetSim('ALLOW')">🟢 Preset 1: Normal Allow</button>
+            <button class="preset-btn" onclick="runPresetSim('WARN')">🟡 Preset 2: Trigger 80% Warning</button>
+            <button class="preset-btn" onclick="runPresetSim('REROUTE')">🔵 Preset 3: Trigger Model Reroute</button>
+            <button class="preset-btn" onclick="runPresetSim('BLOCK')">🔴 Preset 4: Trigger Hard Session Block</button>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+          
+          <!-- Chat Runner -->
+          <div class="card">
+            <h3 style="font-family: 'Outfit'; margin-bottom: 1rem; font-size: 1.1rem;">Interactive Chat Sandbox</h3>
+            <form onsubmit="handleSendChat(event)">
+              <div class="form-group">
+                <label>Session ID</label>
+                <input type="text" id="chat-session-id" class="form-control" placeholder="Session UUID" required>
+              </div>
+              <div class="form-group">
+                <label>Agent ID</label>
+                <input type="text" id="chat-agent-id" class="form-control" placeholder="Agent UUID" required>
+              </div>
+              <div class="form-group">
+                <label>Message Prompt</label>
+                <textarea id="chat-prompt" class="form-control" rows="3" placeholder="Enter prompt to test budget gate..." required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Send Prompt</button>
+            </form>
+          </div>
+
+          <!-- Live Gate Result -->
+          <div class="card">
+            <h3 style="font-family: 'Outfit'; margin-bottom: 1rem; font-size: 1.1rem;">Live Gate Evaluation Output</h3>
+            <div id="chat-result-box" style="display: none;">
+              <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; align-items: center;">
+                <span id="chat-event-badge" class="badge">ALLOW</span>
+                <span id="chat-model-badge" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">llama-3.3-70b-versatile</span>
+              </div>
+              <div style="margin-bottom: 1rem; padding: 0.85rem; background: var(--bg-main); border-radius: var(--radius-sm); font-size: 0.9rem;">
+                <strong>Response:</strong>
+                <p id="chat-response-text" style="margin-top: 0.3rem;"></p>
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                <span>Cost: <strong id="chat-cost">$0.00</strong></span> |
+                <span>Tokens: <strong id="chat-tokens">0 in / 0 out</strong></span>
+              </div>
+            </div>
+            <div id="chat-result-placeholder" style="color: var(--text-muted); font-size: 0.9rem;">
+              Run a prompt or click a preset shortcut to evaluate real-time gating decisions.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Audit Table -->
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div>
+              <h3 style="font-family: 'Outfit'; font-size: 1.1rem;">Spend Event Audit Stream</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted);">Click any row to open the full inspection side drawer.</p>
+            </div>
+            <button class="btn btn-secondary" onclick="loadAuditLogs()">Refresh Stream</button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Decision</th>
+                  <th>Model Used</th>
+                  <th>Cost (USD)</th>
+                  <th>Tokens (In/Out)</th>
+                  <th>Session ID</th>
+                </tr>
+              </thead>
+              <tbody id="audit-table-body">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- TAB 4: DEVELOPER API CONSOLE -->
+      <section id="panel-console" class="tab-panel">
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <h3 style="font-family: 'Outfit'; margin-bottom: 1rem; font-size: 1.1rem;">Developer Endpoint Playground</h3>
+          
+          <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+            <select id="endpoint-select" class="form-control" onchange="updateExplorerInputs()" style="flex: 1;">
+              <option value="HEALTH_LIVE">GET /health/live (Liveness Probe)</option>
+              <option value="HEALTH_READINESS">GET /health (Readiness Probe)</option>
+              <option value="DASHBOARD_SPEND">GET /dashboard/spend (Live Spend Metrics)</option>
+              <option value="CHAT_V1">POST /v1/chat (LLM Request + Budget Gate)</option>
+              <option value="CREATE_TEAM">POST /budgets/teams (Create Team Policy)</option>
+              <option value="CREATE_AGENT">POST /budgets/agents (Create Agent Policy)</option>
+              <option value="CREATE_SESSION">POST /budgets/sessions (Start Session Cap)</option>
+              <option value="GET_AUDIT">GET /audit (Audit Log Stream)</option>
+            </select>
+            <button class="btn btn-primary" onclick="runExplorerRequest()">Execute Request</button>
+            <button class="btn btn-secondary" onclick="copyAsCurl()">Copy as cURL</button>
+          </div>
+
+          <div id="explorer-body-group" class="form-group" style="display: none;">
+            <label>Request Body Payload (JSON)</label>
+            <textarea id="explorer-json-input" class="form-control" rows="5" style="font-family: 'JetBrains Mono';"></textarea>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <h4 style="font-family: 'Outfit'; font-size: 0.95rem; color: var(--text-secondary);">Response Payload</h4>
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+              <span id="explorer-latency" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Latency: -- ms</span>
+              <span id="explorer-status-badge" class="badge">Awaiting Execution</span>
+            </div>
+          </div>
+          <pre id="explorer-json-output" class="code-block">// Executed response output will render here...</pre>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+
+  <!-- Event Detail Side Drawer -->
+  <div id="drawer-overlay" class="drawer-overlay" onclick="closeDrawer()"></div>
+  <div id="drawer" class="drawer">
+    <div class="drawer-header">
+      <h3 class="drawer-title">SpendEvent Details</h3>
+      <button class="drawer-close" onclick="closeDrawer()">&times;</button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-field">
+        <div class="drawer-field-label">Event ID</div>
+        <div id="drw-id" class="drawer-field-val">--</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Timestamp</div>
+        <div id="drw-time" class="drawer-field-val">--</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Decision Type</div>
+        <div id="drw-event-type" class="drawer-field-val">--</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Model Used</div>
+        <div id="drw-model" class="drawer-field-val">--</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Cost USD</div>
+        <div id="drw-cost" class="drawer-field-val">--</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Token Breakdown</div>
+        <div id="drw-tokens" class="drawer-field-val">--</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Session ID</div>
+        <div id="drw-session" class="drawer-field-val">--</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Agent ID</div>
+        <div id="drw-agent" class="drawer-field-val">--</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Team ID</div>
+        <div id="drw-team" class="drawer-field-val">--</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

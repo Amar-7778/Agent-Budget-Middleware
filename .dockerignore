@@ -1,0 +1,16 @@
+.venv
+.git
+.gitignore
+tests/
+.env
+.env.example
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.coverage
+htmlcov/
+alembic/versions/__pycache__/
+alembic/versions/*.pyc
+*.log
