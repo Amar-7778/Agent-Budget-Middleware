@@ -39,6 +39,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 # Copy installed virtual environment from builder stage
 COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy application source code
 COPY . /app
