@@ -1,6 +1,8 @@
 import asyncio
+import json
 import logging
 from typing import Optional, Tuple, Callable, Dict, Any
+
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -358,13 +360,38 @@ class BudgetGate:
         pref_override: Optional[str],
         fall_override: Optional[str],
     ) -> Tuple[Optional[float], Optional[float], Optional[float], str, str]:
-        """Fetches budget limits and models from PostgreSQL if not provided."""
+        """Fetches budget limits and models from Redis cache or PostgreSQL if not provided."""
         sess_budget = sess_override
         agent_budget = agent_override
         team_budget = team_override
         pref_model = pref_override or "llama-3.3-70b-versatile"
         fall_model = fall_override or "llama-3.1-8b-instant"
 
+        # 1. Check Redis metadata cache first for ultra-fast <1ms lookups
+        if None in (sess_budget, agent_budget, team_budget) and self.redis:
+            try:
+                pipe = self.redis.pipeline()
+                pipe.get(f"meta:session:{session_id}")
+                pipe.get(f"meta:agent:{agent_id}")
+                pipe.get(f"meta:team:{team_id}")
+                res = await pipe.execute()
+
+                if sess_budget is None and res[0]:
+                    sess_budget = float(res[0])
+                if res[1]:
+                    meta = json.loads(res[1])
+                    if agent_budget is None and "budget" in meta:
+                        agent_budget = float(meta["budget"])
+                    if pref_override is None and "pref" in meta:
+                        pref_model = meta["pref"]
+                    if fall_override is None and "fall" in meta:
+                        fall_model = meta["fall"]
+                if team_budget is None and res[2]:
+                    team_budget = float(res[2])
+            except Exception as e:
+                logger.debug(f"Redis metadata cache lookup failed: {e}")
+
+        # 2. Fetch missing values from PostgreSQL and populate Redis cache
         if None in (sess_budget, agent_budget, team_budget):
             try:
                 async with self.session_factory() as session:
@@ -373,6 +400,8 @@ class BudgetGate:
                         s_obj = await s_repo.get_by_id(session_id)
                         if s_obj:
                             sess_budget = s_obj.budget_usd
+                            if self.redis:
+                                await self.redis.set(f"meta:session:{session_id}", str(sess_budget), ex=300)
 
                     if agent_budget is None or pref_override is None or fall_override is None:
                         a_repo = AgentRepository(session)
@@ -384,16 +413,23 @@ class BudgetGate:
                                 pref_model = a_obj.preferred_model
                             if fall_override is None:
                                 fall_model = a_obj.fallback_model
+                            if self.redis:
+                                meta = {"budget": agent_budget, "pref": pref_model, "fall": fall_model}
+                                await self.redis.set(f"meta:agent:{agent_id}", json.dumps(meta), ex=300)
 
                     if team_budget is None:
                         t_repo = TeamRepository(session)
                         t_obj = await t_repo.get_by_id(team_id)
                         if t_obj:
                             team_budget = t_obj.monthly_budget_usd
+                            if self.redis:
+                                await self.redis.set(f"meta:team:{team_id}", str(team_budget), ex=300)
             except Exception as exc:
                 logger.warning(f"Could not fetch limits from DB, using fallback defaults: {exc}")
 
         return sess_budget, agent_budget, team_budget, pref_model, fall_model
+
+
 
 
 class BudgetGateASGIMiddleware:

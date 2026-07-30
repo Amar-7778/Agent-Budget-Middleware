@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+import json
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, Field
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,12 +31,19 @@ class SessionCreate(BaseModel):
     budget_usd: float = Field(..., json_schema_extra={"example": 2.0})
 
 
+
 # Endpoints
 @router.post("/teams", status_code=status.HTTP_201_CREATED)
-async def create_team(payload: TeamCreate, db: AsyncSession = Depends(get_db_session)):
+async def create_team(payload: TeamCreate, request: Request, db: AsyncSession = Depends(get_db_session)):
     repo = TeamRepository(db)
     team = Team(name=payload.name, monthly_budget_usd=payload.monthly_budget_usd)
     created = await repo.create(team)
+    redis = getattr(request.app.state, "redis", None)
+    if redis:
+        try:
+            await redis.set(f"meta:team:{created.id}", str(created.monthly_budget_usd), ex=300)
+        except Exception:
+            pass
     return {"id": created.id, "name": created.name, "monthly_budget_usd": created.monthly_budget_usd}
 
 @router.get("/teams/{team_id}")
@@ -47,7 +55,7 @@ async def get_team(team_id: str, db: AsyncSession = Depends(get_db_session)):
     return {"id": team.id, "name": team.name, "monthly_budget_usd": team.monthly_budget_usd}
 
 @router.post("/agents", status_code=status.HTTP_201_CREATED)
-async def create_agent(payload: AgentCreate, db: AsyncSession = Depends(get_db_session)):
+async def create_agent(payload: AgentCreate, request: Request, db: AsyncSession = Depends(get_db_session)):
     repo = AgentRepository(db)
     agent = Agent(
         team_id=payload.team_id,
@@ -57,6 +65,17 @@ async def create_agent(payload: AgentCreate, db: AsyncSession = Depends(get_db_s
         fallback_model=payload.fallback_model,
     )
     created = await repo.create(agent)
+    redis = getattr(request.app.state, "redis", None)
+    if redis:
+        try:
+            meta = {
+                "budget": created.monthly_budget_usd,
+                "pref": created.preferred_model,
+                "fall": created.fallback_model
+            }
+            await redis.set(f"meta:agent:{created.id}", json.dumps(meta), ex=300)
+        except Exception:
+            pass
     return {
         "id": created.id,
         "team_id": created.team_id,
@@ -82,10 +101,17 @@ async def get_agent(agent_id: str, db: AsyncSession = Depends(get_db_session)):
     }
 
 @router.post("/sessions", status_code=status.HTTP_201_CREATED)
-async def create_session(payload: SessionCreate, db: AsyncSession = Depends(get_db_session)):
+async def create_session(payload: SessionCreate, request: Request, db: AsyncSession = Depends(get_db_session)):
     repo = SessionRepository(db)
     sess = Session(agent_id=payload.agent_id, budget_usd=payload.budget_usd, status="active")
     created = await repo.create(sess)
+    redis = getattr(request.app.state, "redis", None)
+    if redis:
+        try:
+            await redis.set(f"meta:session:{created.id}", str(created.budget_usd), ex=300)
+
+        except Exception:
+            pass
     return {
         "id": created.id,
         "agent_id": created.agent_id,
@@ -93,6 +119,7 @@ async def create_session(payload: SessionCreate, db: AsyncSession = Depends(get_
         "started_at": created.started_at.isoformat(),
         "status": created.status,
     }
+
 
 @router.get("/sessions/{session_id}")
 async def get_session(session_id: str, db: AsyncSession = Depends(get_db_session)):

@@ -32,11 +32,21 @@ if "sqlite" not in DATABASE_URL:
         connect_args["ssl"] = "require"
 
 
-engine = create_async_engine(
-    DATABASE_URL,
-    echo=False,
-    connect_args=connect_args,
-)
+engine_kwargs = {
+    "echo": False,
+    "connect_args": connect_args,
+}
+if "sqlite" not in DATABASE_URL:
+    engine_kwargs.update({
+        "pool_size": 20,
+        "max_overflow": 30,
+        "pool_timeout": 30,
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+    })
+
+engine = create_async_engine(DATABASE_URL, **engine_kwargs)
+
 
 
 AsyncSessionFactory = async_sessionmaker(
