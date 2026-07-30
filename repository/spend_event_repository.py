@@ -39,3 +39,17 @@ class SpendEventRepository:
         await self.session.execute(stmt)
         await self.session.commit()
         return await self.get_by_id(event_id)
+
+    async def update_event_type(
+        self,
+        event_id: str,
+        event_type: str,
+    ) -> None:
+        stmt = (
+            update(SpendEvent)
+            .where(SpendEvent.id == event_id)
+            .values(event_type=event_type)
+        )
+        await self.session.execute(stmt)
+        await self.session.commit()
+

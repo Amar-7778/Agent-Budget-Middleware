@@ -42,40 +42,78 @@ def main():
     print("-" * 70)
 
     url = f"{base_url}/demo/run"
-    payload = json.dumps({"scenario": "full_governance", "reset_first": True}).encode("utf-8")
+    payload = json.dumps({
+        "num_agents": 5,
+        "requests_per_agent": 5,
+        "team_budget_usd": 2.00,
+        "agent_budget_usd": 0.30,
+        "session_budget_usd": 0.05,
+        "concurrency": True
+    }).encode("utf-8")
     req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
 
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
+        with urllib.request.urlopen(req, timeout=60) as resp:
 
             res_data = json.loads(resp.read().decode())
-            
+
             summary = res_data.get("summary", {})
+            agents = res_data.get("agents", [])
+
             print(f"\n[SUCCESS] DEMO SCENARIO EXECUTION COMPLETE!")
-            print(f"Total Prompts Evaluated: {summary.get('total_prompts')}")
-            print(f"Summary: ALLOW={summary.get('allow_count')} | WARN={summary.get('warn_count')} | REROUTE={summary.get('reroute_count')} | BLOCK={summary.get('block_count')}")
-            print(f"Total Recorded Spend: ${summary.get('total_demo_spend_usd', 0.0):.6f}\n")
+            print(f"Team ID: {res_data.get('team_id')}")
+            print(f"Total Requests Evaluated: {summary.get('total_requests', 0)}")
+            print(f"Total System Spend: ${summary.get('total_spend_usd', 0.0):.6f}")
+            print(f"Duration: {summary.get('duration_seconds', 0.0):.2f}s")
+            print(f"Any Budget Exceeded: {summary.get('any_budget_exceeded', False)}\n")
 
             print("=" * 70)
-            print("STEP-BY-STEP AGENT GOVERNANCE RESULTS:")
+            print("AGENT-BY-AGENT GOVERNANCE RESULTS:")
             print("=" * 70)
 
-            for step in res_data.get("steps", []):
-                event_type = step.get("event_type", "").upper()
-                icon = "[ALLOW]" if event_type == "ALLOW" else (" [WARN]" if event_type == "WARN" else (" [REROUTE]" if event_type == "REROUTE" else "[BLOCK]"))
+            for agent in agents:
+                oc = agent.get("outcomes", {})
+                name = agent.get("name", "Unknown")
+                agent_id = agent.get("agent_id", "N/A")
+                requests_sent = agent.get("requests_sent", 0)
+                spend = agent.get("final_spend_usd", 0.0)
+                budget = agent.get("budget_usd", 0.0)
 
+                allow_cnt = oc.get("allow", 0)
+                warn_cnt = oc.get("warn", 0)
+                block_cnt = oc.get("block", 0)
+                reroute_cnt = oc.get("reroute", 0)
+                pause_cnt = oc.get("pause", 0)
 
-                print(f"\n{icon} Step {step.get('step')}: {step.get('agent_name')} ({step.get('agent_id')})")
-                print(f"   Policy Decision : [{event_type}]")
-                print(f"   Model Used      : {step.get('model_used')}")
-                print(f"   Cost (USD)      : ${step.get('cost_usd', 0.0):.6f}")
-                print(f"   Tokens          : {step.get('tokens_in')} In / {step.get('tokens_out')} Out")
-                print(f"   Prompt          : \"{step.get('prompt')}\"")
-                print(f"   Response        : {step.get('response')[:90]}...")
-                print(f"   Explanation     : {step.get('explanation')}")
+                # Determine primary outcome icon
+                if pause_cnt > 0:
+                    icon = "⏸ [PAUSE]"
+                elif block_cnt > 0:
+                    icon = "🔴[BLOCK]"
+                elif reroute_cnt > 0:
+                    icon = "🔵[REROUTE]"
+                elif warn_cnt > 0:
+                    icon = "🟡[WARN]"
+                else:
+                    icon = "🟢[ALLOW]"
 
+                print(f"\n{icon} {name} ({agent_id})")
+                print(f"   Requests Sent   : {requests_sent}")
+                print(f"   Outcomes        : ALLOW={allow_cnt} | WARN={warn_cnt} | BLOCK={block_cnt} | REROUTE={reroute_cnt} | PAUSE={pause_cnt}")
+                print(f"   Final Spend     : ${spend:.6f} / ${budget:.6f} budget")
+
+                if spend > budget:
+                    print(f"   ⚠️  SPEND EXCEEDS BUDGET")
+
+            # Summary footer
             print("\n" + "=" * 70)
-            print("To view live metrics and spend gauges, open the Web Dashboard at:")
+            violation = summary.get("any_budget_exceeded", False)
+            if violation:
+                print("⚠️  VIOLATION DETECTED: At least one agent exceeded its configured budget.")
+            else:
+                print("✅ ALL BUDGETS ENFORCED: Atomic Redis reservation + rollback passed.")
+
+            print(f"\nTo view live metrics and spend gauges, open the Web Dashboard at:")
             print(f"URL: {base_url}/")
             print("=" * 70 + "\n")
 

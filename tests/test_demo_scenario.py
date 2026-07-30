@@ -58,20 +58,21 @@ async def test_demo_run_produces_all_four_outcomes_deterministically(async_clien
 
     assert "team_id" in data
     assert "agents" in data
-    assert len(data["agents"]) >= 4
+    assert len(data["agents"]) >= 5
 
     # Aggregate outcome totals across all agents
-    all_outcomes = {"allow": 0, "warn": 0, "block": 0, "reroute": 0}
+    all_outcomes = {"allow": 0, "warn": 0, "block": 0, "reroute": 0, "pause": 0}
     for agent in data["agents"]:
         oc = agent.get("outcomes", {})
         for k in all_outcomes:
             all_outcomes[k] += oc.get(k, 0)
 
-    # Assert that the scenario produces all 4 outcome types deterministically
+    # Assert that the scenario produces all 5 outcome types deterministically
     assert all_outcomes["allow"] > 0, "Expected at least one ALLOW outcome"
     assert all_outcomes["warn"] > 0, "Expected at least one WARN outcome"
     assert all_outcomes["block"] > 0, "Expected at least one BLOCK outcome"
     assert all_outcomes["reroute"] > 0, "Expected at least one REROUTE outcome"
+    assert all_outcomes["pause"] > 0, "Expected at least one PAUSE outcome (runaway detector)"
 
     # Assert summary section schema
     summary = data["summary"]

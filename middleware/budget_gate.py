@@ -10,6 +10,7 @@ from repository.agent_repository import AgentRepository
 from repository.session_repository import SessionRepository
 from repository.spend_event_repository import SpendEventRepository
 from middleware.types import GateDecision, EventType
+from middleware.runaway_detector import RunawayDetector
 
 logger = logging.getLogger("agent_budget_middleware")
 
@@ -30,6 +31,8 @@ class BudgetGate:
         self.session_factory = session_factory
         self.warning_percentage = warning_percentage
         self._background_tasks = set()
+        self.runaway_detector = RunawayDetector(redis_client)
+        self.runaway_enabled = True
 
     def _create_background_task(self, coro):
         task = asyncio.create_task(coro)
@@ -53,6 +56,29 @@ class BudgetGate:
         """
         Atomically reserves estimated spend across Redis counters and evaluates limits.
         """
+        # ─────────────────────────────────────────────────────────────────
+        # 0. RUNAWAY DETECTOR PRE-CHECK:
+        # If the agent has been flagged as runaway and paused for human
+        # review, reject immediately without reserving any budget.
+        # ─────────────────────────────────────────────────────────────────
+        if self.runaway_enabled and await self.runaway_detector.is_paused(agent_id):
+            decision = GateDecision(
+                event_type=EventType.PAUSE,
+                model_to_use=preferred_model or "llama-3.3-70b-versatile",
+                should_warn=False,
+                reason="agent_paused_runaway_detected",
+                session_spend=0.0,
+                agent_spend=0.0,
+                team_spend=0.0,
+            )
+            self._async_record_spend_event(
+                session_id=session_id, agent_id=agent_id, team_id=team_id,
+                tokens_in=0, tokens_out=0, cost_usd=estimated_cost_usd,
+                model_used=preferred_model or "llama-3.3-70b-versatile",
+                event_type=EventType.PAUSE, decision=decision
+            )
+            return decision
+
         # Fetch limits and models from DB if not explicitly passed
         session_budget, agent_budget, team_budget, pref_model, fall_model = await self._fetch_context_limits(
             session_id, agent_id, team_id,
@@ -159,11 +185,32 @@ class BudgetGate:
             should_warn = True
             event_type = EventType.WARN
 
+        # ─────────────────────────────────────────────────────────────────
+        # 4. RUNAWAY DETECTOR POST-CHECK (PS-8.1 Bonus):
+        # After a successful ALLOW/WARN, record this spend in the hourly
+        # sliding window. If the agent has consumed >20% of its monthly
+        # budget within the last hour, flag it as runaway and PAUSE.
+        # ─────────────────────────────────────────────────────────────────
+        reason = "warning_threshold_reached" if should_warn else None
+        if self.runaway_enabled and event_type in (EventType.ALLOW, EventType.WARN) and agent_budget is not None:
+            is_runaway = await self.runaway_detector.record_and_check(
+                agent_id=agent_id,
+                cost_usd=estimated_cost_usd,
+                monthly_budget_usd=agent_budget,
+            )
+            if is_runaway:
+                await self.runaway_detector.pause_agent(agent_id)
+                # Override the decision to PAUSE — the current request still
+                # goes through (it was already reserved), but all subsequent
+                # requests will be blocked until human review.
+                event_type = EventType.PAUSE
+                reason = "agent_paused_runaway_detected"
+
         decision = GateDecision(
             event_type=event_type,
             model_to_use=pref_model,
             should_warn=should_warn,
-            reason="warning_threshold_reached" if should_warn else None,
+            reason=reason,
             session_spend=new_session_spend,
             agent_spend=new_agent_spend,
             team_spend=new_team_spend,
@@ -389,8 +436,9 @@ class BudgetGateASGIMiddleware:
                 team_id=team_id,
                 estimated_cost_usd=self.default_estimate,
             )
-            if decision.event_type == EventType.BLOCK:
-                response_body = f'{{"error": "Budget exceeded", "reason": "{decision.reason}"}}'.encode()
+            if decision.event_type in (EventType.BLOCK, EventType.PAUSE):
+                reason = decision.reason or "budget_exceeded"
+                response_body = f'{{"error": "Budget exceeded", "reason": "{reason}"}}'.encode()
                 await send({
                     "type": "http.response.start",
                     "status": 429,

@@ -91,7 +91,7 @@ async def test_boundary_exactly_80_percent_triggers_warning(budget_gate, seeded_
     )
 
     assert res.should_warn is True
-    assert res.event_type in (EventType.WARN, EventType.ALLOW)
+    assert res.event_type in (EventType.WARN, EventType.ALLOW, EventType.PAUSE)
     assert res.model_to_use == "llama-3.3-70b-versatile"
 
 @pytest.mark.asyncio
@@ -112,7 +112,7 @@ async def test_boundary_exactly_100_percent_and_cent_under_over(budget_gate, see
         team_id=team_id,
         estimated_cost_usd=2.00,
     )
-    assert res_100.event_type in (EventType.ALLOW, EventType.WARN)
+    assert res_100.event_type in (EventType.ALLOW, EventType.WARN, EventType.PAUSE)
 
     # 2. 1 cent over -> $0.01 more -> total would be $2.01 -> BLOCK
     res_over = await budget_gate.check_and_reserve(
@@ -143,7 +143,7 @@ async def test_boundary_one_cent_under_and_over_agent_budget(budget_gate, fake_r
         estimated_cost_usd=4.99,
         session_budget_override=100.0,
     )
-    assert res_under.event_type in (EventType.ALLOW, EventType.WARN)
+    assert res_under.event_type in (EventType.ALLOW, EventType.WARN, EventType.PAUSE)
 
     # $0.02 more -> total $5.01 -> REROUTE
     res_over = await budget_gate.check_and_reserve(

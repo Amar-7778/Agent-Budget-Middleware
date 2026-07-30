@@ -86,6 +86,20 @@ async def chat_endpoint(
             }
         )
 
+    if decision.event_type == EventType.PAUSE:
+        logger.warning("Request blocked — agent paused by runaway detector", reason=decision.reason)
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail={
+                "error": "Agent paused for human review",
+                "reason": decision.reason,
+                "message": "This agent has been flagged as potentially stuck in a loop "
+                           "(>20% of monthly budget consumed within 1 hour). "
+                           "Contact an operator to unpause via POST /budgets/agents/{id}/unpause.",
+                "correlation_id": cid,
+            }
+        )
+
     model_to_use = decision.model_to_use
 
     # 4. Call Groq provider adapter with failure handling

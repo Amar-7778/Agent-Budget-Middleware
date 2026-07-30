@@ -88,8 +88,14 @@ async def run_demo_scenario(
             # agent-4: REROUTE bucket -> tiny agent monthly budget ($0.00001), large session budget ($10.00) so reroute to fallback occurs
             m_budget = 0.00001
             s_budget = 10.00
+        elif i == 5:
+            # agent-5: RUNAWAY/PAUSE bucket -> small monthly budget ($0.001)
+            # Multiple rapid requests will exceed 20% of monthly budget ($0.0002)
+            # within 1 hour, triggering the runaway detector pause.
+            m_budget = 0.001
+            s_budget = 10.00
         else:
-            # agent-5+: Concurrent batch testing atomic counters
+            # agent-6+: Concurrent batch testing atomic counters
             m_budget = payload.agent_budget_usd
             s_budget = payload.session_budget_usd
 
@@ -144,6 +150,9 @@ async def run_demo_scenario(
         if decision.event_type == EventType.BLOCK:
             return
 
+        if decision.event_type == EventType.PAUSE:
+            return
+
         model_to_use = decision.model_to_use
 
         try:
@@ -186,8 +195,11 @@ async def run_demo_scenario(
         elif agent_num == 4:
             # agent-4: 1 request to trigger reroute
             req_count = 1
+        elif agent_num == 5:
+            # agent-5: 3 rapid requests to trigger runaway detector
+            req_count = 3
         else:
-            # agent-5+: requests_per_agent
+            # agent-6+: requests_per_agent
             req_count = min(payload.requests_per_agent, 10)
 
         for r in range(req_count):
@@ -228,7 +240,7 @@ async def run_demo_scenario(
         res = await db.execute(stmt)
         rows = res.all()
 
-        outcome_counts = {"allow": 0, "warn": 0, "block": 0, "reroute": 0}
+        outcome_counts = {"allow": 0, "warn": 0, "block": 0, "reroute": 0, "pause": 0}
         pg_spend = 0.0
         agent_total_requests = 0
 

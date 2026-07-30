@@ -20,6 +20,9 @@ async def test_concurrency_50_plus_simultaneous_calls(budget_gate, fake_redis, s
     agent_budget = 1.00
     request_estimate = 0.10  # 10 requests allowed before hitting $1.00 limit
 
+    # Disable runaway detector for concurrency testing of core budgeting limits
+    budget_gate.runaway_enabled = False
+
     async def single_call(index: int):
         return await budget_gate.check_and_reserve(
             session_id=f"{session_id}-{index}",

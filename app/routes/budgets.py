@@ -107,3 +107,44 @@ async def get_session(session_id: str, db: AsyncSession = Depends(get_db_session
         "started_at": sess.started_at.isoformat(),
         "status": sess.status,
     }
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Runaway Agent Detector — Human Review Endpoints (PS-8.1 Bonus)
+# ─────────────────────────────────────────────────────────────────────────
+from fastapi import Request
+
+@router.post("/agents/{agent_id}/unpause", status_code=status.HTTP_200_OK)
+async def unpause_agent(agent_id: str, request: Request, db: AsyncSession = Depends(get_db_session)):
+    """
+    Human review resolution: clears the runaway-detector pause flag for an agent.
+    After unpausing, the agent's hourly spend window is reset so it won't be
+    immediately re-paused.
+    """
+    budget_gate = request.app.state.budget_gate
+    was_paused = await budget_gate.runaway_detector.unpause_agent(agent_id)
+    return {
+        "agent_id": agent_id,
+        "was_paused": was_paused,
+        "status": "unpaused" if was_paused else "was_not_paused",
+        "message": f"Agent '{agent_id}' has been unpaused and is now active."
+                   if was_paused else f"Agent '{agent_id}' was not paused.",
+    }
+
+@router.get("/agents/{agent_id}/status")
+async def get_agent_status(agent_id: str, request: Request, db: AsyncSession = Depends(get_db_session)):
+    """Check if an agent is currently paused by the runaway detector."""
+    repo = AgentRepository(db)
+    agent = await repo.get_by_id(agent_id)
+    if not agent:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
+
+    budget_gate = request.app.state.budget_gate
+    is_paused = await budget_gate.runaway_detector.is_paused(agent_id)
+    return {
+        "agent_id": agent.id,
+        "name": agent.name,
+        "is_paused": is_paused,
+        "monthly_budget_usd": agent.monthly_budget_usd,
+    }
+

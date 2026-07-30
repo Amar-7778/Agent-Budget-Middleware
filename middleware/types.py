@@ -7,6 +7,7 @@ class EventType(str, Enum):
     WARN = "warn"
     BLOCK = "block"
     REROUTE = "reroute"
+    PAUSE = "pause"  # Runaway agent detector: agent paused for human review
 
 class SessionStatus(str, Enum):
     ACTIVE = "active"
