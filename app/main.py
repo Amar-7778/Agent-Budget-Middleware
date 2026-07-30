@@ -57,6 +57,16 @@ async def lifespan(app: FastAPI):
     app.state.budget_gate = budget_gate
     app.state.groq_adapter = groq_adapter
 
+    # Ensure PostgreSQL database tables exist on startup
+    from database import engine
+    from models import Base
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("Database schema verified/created successfully")
+    except Exception as e:
+        logger.warning("Database auto-table creation encountered issue", error=str(e))
+
     logger.info("Application started up successfully", app_env=settings.APP_ENV)
     yield
     # Shutdown: Close Redis connection cleanly
