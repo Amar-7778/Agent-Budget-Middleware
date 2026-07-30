@@ -18,7 +18,9 @@ from app.routes import (
     audit_router,
     health_router,
     ui_router,
+    demo_router,
 )
+
 
 
 # Initialize structured logging
@@ -44,8 +46,23 @@ logger = get_logger("app_main")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: Initialize Redis connection & dependencies
-    redis_client = Redis.from_url(settings.REDIS_URL, decode_responses=True)
+    # Startup: Initialize Redis connection & dependencies (with Docker/Local host fallback)
+    redis_url = settings.REDIS_URL
+    try:
+        redis_client = Redis.from_url(redis_url, decode_responses=True)
+        await redis_client.ping()
+    except Exception:
+        # Fallback to localhost if running outside Docker container
+        if "redis://redis:" in redis_url:
+            alt_url = redis_url.replace("redis://redis:", "redis://localhost:", 1)
+            try:
+                redis_client = Redis.from_url(alt_url, decode_responses=True)
+                await redis_client.ping()
+            except Exception:
+                redis_client = Redis.from_url(redis_url, decode_responses=True)
+        else:
+            redis_client = Redis.from_url(redis_url, decode_responses=True)
+
     budget_gate = BudgetGate(
         redis_client=redis_client,
         session_factory=AsyncSessionFactory,
@@ -56,6 +73,7 @@ async def lifespan(app: FastAPI):
     app.state.redis = redis_client
     app.state.budget_gate = budget_gate
     app.state.groq_adapter = groq_adapter
+
 
     # Ensure PostgreSQL database tables exist on startup
     from database import engine
@@ -171,4 +189,6 @@ app.include_router(budgets_router)
 app.include_router(dashboard_router)
 app.include_router(audit_router)
 app.include_router(health_router)
+app.include_router(demo_router)
+
 

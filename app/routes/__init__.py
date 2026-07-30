@@ -4,6 +4,7 @@ from app.routes.dashboard import router as dashboard_router
 from app.routes.audit import router as audit_router
 from app.routes.health import router as health_router
 from app.routes.ui import router as ui_router
+from app.routes.demo import router as demo_router
 
 __all__ = [
     "chat_router",
@@ -12,5 +13,7 @@ __all__ = [
     "audit_router",
     "health_router",
     "ui_router",
+    "demo_router",
 ]
+
 

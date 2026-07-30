@@ -165,3 +165,21 @@ async def test_ui_endpoints(async_client):
     assert resp_ui.status_code == 200
     assert "Agent Budget Middleware" in resp_ui.text
 
+@pytest.mark.asyncio
+async def test_demo_scenario_endpoints(async_client):
+    # Test POST /demo/run
+    run_resp = await async_client.post("/demo/run", json={"num_agents": 4, "requests_per_agent": 2})
+    assert run_resp.status_code == 200
+    data = run_resp.json()
+    assert "team_id" in data
+    assert "agents" in data
+    assert "summary" in data
+
+    # Test DELETE /demo/cleanup
+    cleanup_resp = await async_client.delete("/demo/cleanup")
+    assert cleanup_resp.status_code == 200
+    cleanup_data = cleanup_resp.json()
+    assert cleanup_data["status"] == "success"
+
+
+

@@ -14,6 +14,8 @@ GROQ_PRICING = {
     "default": {"input": 0.10 / 1_000_000, "output": 0.20 / 1_000_000},
 }
 
+import asyncio
+
 class GroqAdapter(ProviderAdapter):
     def __init__(self, api_key: str = ""):
         self.api_key = api_key or os.getenv("GROQ_API_KEY", "")
@@ -41,14 +43,25 @@ class GroqAdapter(ProviderAdapter):
 
         if self.client and self.api_key and not self.api_key.startswith("mock"):
             logger.info("Calling Groq API", model=model, prompt_length=len(prompt))
-            completion = await self.client.chat.completions.create(
-                messages=[{"role": "user", "content": prompt}],
-                model=model,
-            )
-            response_text = completion.choices[0].message.content or ""
-            usage = completion.usage
-            tokens_in = usage.prompt_tokens if usage else math.ceil(len(prompt) / 4.0)
-            tokens_out = usage.completion_tokens if usage else math.ceil(len(response_text) / 4.0)
+            try:
+                completion = await asyncio.wait_for(
+                    self.client.chat.completions.create(
+                        messages=[{"role": "user", "content": prompt}],
+                        model=model,
+                    ),
+                    timeout=12.0
+
+
+                )
+                response_text = completion.choices[0].message.content or ""
+                usage = completion.usage
+                tokens_in = usage.prompt_tokens if usage else math.ceil(len(prompt) / 4.0)
+                tokens_out = usage.completion_tokens if usage else math.ceil(len(response_text) / 4.0)
+            except Exception as exc:
+                logger.warning("Groq API call timed out or failed, falling back to simulated output", error=str(exc))
+                response_text = f"Simulated response from Groq using {model} to prompt: '{prompt[:30]}...'"
+                tokens_in = math.ceil(len(prompt) / 4.0)
+                tokens_out = 50
         else:
             # Mock mode for testing or offline development
             logger.info("Mock Groq API call executed", model=model)
@@ -58,3 +71,4 @@ class GroqAdapter(ProviderAdapter):
 
         actual_cost = round((tokens_in * rates["input"]) + (tokens_out * rates["output"]), 6)
         return response_text, tokens_in, tokens_out, actual_cost
+

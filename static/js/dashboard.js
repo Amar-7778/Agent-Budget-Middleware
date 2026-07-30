@@ -18,6 +18,7 @@ function switchTab(tabId) {
   const titles = {
     command: "Governance Command Center",
     policies: "Policy & Budget Configuration Hub",
+    demo: "Demo Scenario Studio",
     sandbox: "Agent Sandbox & Audit Logs",
     console: "Developer API Console"
   };
@@ -26,6 +27,7 @@ function switchTab(tabId) {
   if (tabId === 'command') loadDashboardMetrics();
   if (tabId === 'sandbox') loadAuditLogs();
 }
+
 
 // Health Check
 async function checkHealth() {
@@ -381,6 +383,14 @@ const SAMPLE_PAYLOADS = {
   HEALTH_LIVE: { method: "GET", url: "/health/live" },
   HEALTH_READINESS: { method: "GET", url: "/health" },
   DASHBOARD_SPEND: { method: "GET", url: "/dashboard/spend" },
+  DEMO_RUN: {
+    method: "POST", url: "/demo/run",
+    body: { scenario: "full_governance", reset_first: true }
+  },
+  DEMO_RESET: {
+    method: "POST", url: "/demo/reset",
+    body: { clear_all_spend: true }
+  },
   CHAT_V1: {
     method: "POST", url: "/v1/chat",
     body: { session_id: "ENTER_SESSION_UUID", agent_id: "ENTER_AGENT_UUID", message: "Explain quantum computing." }
@@ -399,6 +409,114 @@ const SAMPLE_PAYLOADS = {
   },
   GET_AUDIT: { method: "GET", url: "/audit" }
 };
+
+// Demo Scenario Studio Handlers
+async function runDemoScenarioGenerator() {
+  const loading = document.getElementById("demo-loading-indicator");
+  const resultsCard = document.getElementById("demo-results-card");
+  const placeholder = document.getElementById("demo-placeholder-card");
+  const btnRun = document.getElementById("btn-run-demo");
+
+  placeholder.style.display = "none";
+  resultsCard.style.display = "none";
+  loading.style.display = "block";
+  if (btnRun) btnRun.disabled = true;
+
+  try {
+    const res = await fetch("/demo/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        num_agents: 5,
+        requests_per_agent: 15,
+        team_budget_usd: 2.00,
+        agent_budget_usd: 0.30,
+        session_budget_usd: 0.05,
+        concurrency: true
+      })
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    const summary = data.summary || {};
+    const agents = data.agents || [];
+
+    loading.style.display = "none";
+    resultsCard.style.display = "block";
+    if (btnRun) btnRun.disabled = false;
+
+    document.getElementById("demo-duration-badge").innerText = `Duration: ${(summary.duration_seconds || 0).toFixed(2)}s`;
+
+    // Render Table Body
+    const tbody = document.getElementById("demo-table-body");
+    tbody.innerHTML = "";
+
+    agents.forEach(agent => {
+      const oc = agent.outcomes || {};
+      const allowCnt = oc.allow || 0;
+      const warnCnt = oc.warn || 0;
+      const blockCnt = oc.block || 0;
+      const rerouteCnt = oc.reroute || 0;
+
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${agent.name}</strong> <br><code style="font-size: 0.72rem; color: var(--text-secondary);">${agent.agent_id}</code></td>
+          <td style="font-weight: 600;">${agent.requests_sent}</td>
+          <td><span class="badge badge-allow">${allowCnt}</span></td>
+          <td><span class="badge ${warnCnt > 0 ? 'badge-warn' : ''}">${warnCnt}</span></td>
+          <td><span class="badge ${blockCnt > 0 ? 'badge-block' : ''}">${blockCnt}</span></td>
+          <td><span class="badge ${rerouteCnt > 0 ? 'badge-reroute' : ''}">${rerouteCnt}</span></td>
+          <td style="font-weight: 600; color: ${agent.final_spend_usd > agent.budget_usd ? 'var(--danger)' : 'var(--text-main)'};">$${(agent.final_spend_usd || 0).toFixed(4)}</td>
+          <td style="color: var(--text-secondary);">$${(agent.budget_usd || 0).toFixed(4)}</td>
+        </tr>
+      `;
+    });
+
+    // Render Summary Table Footer
+    const tfoot = document.getElementById("demo-table-foot");
+    const violationStatus = summary.any_budget_exceeded 
+      ? `<span class="badge badge-block">VIOLATION DETECTED</span>`
+      : `<span class="badge badge-allow">100% ATOMIC PASSED</span>`;
+
+    tfoot.innerHTML = `
+      <tr>
+        <td>SUMMARY TOTALS</td>
+        <td>${summary.total_requests || 0} Req</td>
+        <td colspan="4" style="text-align: center;">Atomic Enforcement: ${violationStatus}</td>
+        <td style="color: var(--success); font-size: 1rem;">$${(summary.total_spend_usd || 0).toFixed(4)}</td>
+        <td>Team Cap: $2.00</td>
+      </tr>
+    `;
+
+    // Refresh Dashboard metrics
+    loadDashboardMetrics();
+
+  } catch (err) {
+    loading.style.display = "none";
+    placeholder.style.display = "block";
+    if (btnRun) btnRun.disabled = false;
+    alert("Error executing demo scenario: " + err.message);
+  }
+}
+
+async function cleanupDemoScenario() {
+  if (!confirm("Are you sure you want to clean up all demo-* teams, agents, sessions, and spend events?")) return;
+
+  try {
+    const res = await fetch("/demo/cleanup", { method: "DELETE" });
+    if (res.ok) {
+      alert("Demo resources and spend counters cleaned up successfully.");
+      document.getElementById("demo-results-card").style.display = "none";
+      document.getElementById("demo-placeholder-card").style.display = "block";
+      loadDashboardMetrics();
+    }
+  } catch (err) {
+    alert("Error cleaning up demo scenario: " + err.message);
+  }
+}
+
+
 
 function updateExplorerInputs() {
   const sel = document.getElementById("endpoint-select").value;

@@ -32,8 +32,14 @@
         </button>
       </li>
       <li class="nav-item">
-        <button onclick="switchTab('sandbox')">
+        <button onclick="switchTab('demo')">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Demo Scenario Studio
+        </button>
+      </li>
+      <li class="nav-item">
+        <button onclick="switchTab('sandbox')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
           Agent Sandbox & Audit
         </button>
       </li>
@@ -43,6 +49,7 @@
           Developer API Console
         </button>
       </li>
+
     </ul>
   </aside>
 
@@ -52,7 +59,10 @@
       <div class="header-title">
         <h2 id="page-title">Governance Command Center</h2>
       </div>
-      <div class="header-actions">
+      <div class="header-actions" style="display: flex; gap: 1rem; align-items: center;">
+        <button class="btn btn-primary" onclick="switchTab('demo'); runFullDemoScenario();" style="font-size: 0.85rem; padding: 0.4rem 0.9rem; background: linear-gradient(135deg, #10b981, #059669); border: none; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+          🚀 Run Demo Scenario
+        </button>
         <div id="health-pill" class="status-pill">
           <span class="status-dot"></span>
           <span id="health-text">System Active</span>
@@ -60,13 +70,37 @@
       </div>
     </header>
 
+
     <main class="content">
 
       <!-- TAB 1: GOVERNANCE COMMAND CENTER -->
       <section id="panel-command" class="tab-panel active">
         
+        <!-- Live Demo Scenario Generator Banner -->
+        <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9)); border: 1px solid var(--border-color);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h3 style="font-family: 'Outfit'; font-size: 1.25rem; margin-bottom: 0.4rem; color: #fff;">Multi-Agent Governance Demo Generator</h3>
+              <p style="font-size: 0.88rem; color: var(--text-secondary); max-width: 650px;">
+                Provision a multi-agent scenario and fire real concurrent traffic (via <code>asyncio.gather</code>) to show every outcome (<strong>ALLOW</strong>, <strong>WARN</strong>, <strong>BLOCK</strong>, <strong>REROUTE</strong>) live, backed by real Groq calls and atomic Redis/Postgres state.
+              </p>
+            </div>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <button class="btn btn-primary" onclick="runDemoScenarioGenerator()" style="display: flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #10b981, #059669); border: none;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Run demo scenario
+              </button>
+              <button class="btn btn-secondary" onclick="cleanupDemoScenario()" style="display: flex; align-items: center; gap: 0.5rem;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                Cleanup Demo Data
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Summary Cards -->
         <div class="grid-stats">
+
           <div class="card">
             <div class="card-header">
               <span class="card-title">Total Active Teams</span>
@@ -214,6 +248,8 @@
             <button class="preset-btn" onclick="runPresetSim('WARN')">🟡 Preset 2: Trigger 80% Warning</button>
             <button class="preset-btn" onclick="runPresetSim('REROUTE')">🔵 Preset 3: Trigger Model Reroute</button>
             <button class="preset-btn" onclick="runPresetSim('BLOCK')">🔴 Preset 4: Trigger Hard Session Block</button>
+            <button class="preset-btn" onclick="switchTab('demo'); runFullDemoScenario();" style="background: rgba(16, 185, 129, 0.2); border-color: var(--success); color: #fff; font-weight: 600;">🚀 Run Full Multi-Agent Demo Scenario</button>
+
           </div>
         </div>
 
@@ -294,8 +330,79 @@
       </section>
 
 
+      <!-- TAB DEMO: DEMO SCENARIO STUDIO -->
+      <section id="panel-demo" class="tab-panel">
+        <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9)); border: 1px solid var(--border-color);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h3 style="font-family: 'Outfit'; font-size: 1.25rem; margin-bottom: 0.4rem; color: #fff;">Production Multi-Agent Governance Demo Generator</h3>
+              <p style="font-size: 0.88rem; color: var(--text-secondary); max-width: 650px;">
+                Provision a multi-agent scenario and fire real concurrent traffic (via <code>asyncio.gather</code>) to show every outcome (<strong>ALLOW</strong>, <strong>WARN</strong>, <strong>BLOCK</strong>, <strong>REROUTE</strong>) live, backed by real Groq calls and atomic Redis/Postgres state.
+              </p>
+            </div>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <button id="btn-run-demo" class="btn btn-primary" onclick="runDemoScenarioGenerator()" style="display: flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #10b981, #059669); border: none;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Run demo scenario
+              </button>
+              <button id="btn-cleanup-demo" class="btn btn-secondary" onclick="cleanupDemoScenario()" style="display: flex; align-items: center; gap: 0.5rem;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                Cleanup Demo Data
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading State Indicator -->
+        <div id="demo-loading-indicator" class="card" style="display: none; text-align: center; padding: 2.5rem; margin-bottom: 2rem;">
+          <div style="font-size: 1.1rem; font-weight: 600; color: var(--info); margin-bottom: 0.5rem;">Provisioning Scenario & Firing Concurrent Traffic...</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">Executing <code>asyncio.gather</code> concurrent LLM requests against Budget Gate middleware...</p>
+        </div>
+
+        <!-- Demo Summary Table -->
+        <div id="demo-results-card" class="card" style="margin-bottom: 2rem; display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="font-family: 'Outfit'; font-size: 1.1rem;">Live Enforcement Outcomes & Summary Table</h3>
+            <span id="demo-duration-badge" class="badge" style="background: var(--bg-main); color: var(--text-main);">Duration: 0.0s</span>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Agent Name</th>
+                  <th>Requests Sent</th>
+                  <th>ALLOW</th>
+                  <th>WARN (>=80%)</th>
+                  <th>BLOCK</th>
+                  <th>REROUTE</th>
+                  <th>Final Spend (USD)</th>
+                  <th>Budget Limit (USD)</th>
+                </tr>
+              </thead>
+              <tbody id="demo-table-body">
+                <!-- Populated dynamically from /demo/run JSON response -->
+              </tbody>
+              <tfoot id="demo-table-foot" style="background: var(--bg-main); font-weight: 600;">
+                <!-- Overall Summary Line -->
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Default Placeholder Card -->
+        <div id="demo-placeholder-card" class="card" style="text-align: center; padding: 3rem; color: var(--text-muted); margin-bottom: 2rem;">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 48px; height: 48px; margin: 0 auto 1rem; opacity: 0.5;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p style="font-size: 1rem; font-weight: 500;">Click <strong>"Run demo scenario"</strong> above to provision agents and fire live concurrent traffic.</p>
+          <p style="font-size: 0.825rem; margin-top: 0.4rem;">The scenario will test atomic Redis counters under load and display real database enforcement outcomes in a live summary table.</p>
+        </div>
+      </section>
+
+
+
       <!-- TAB 4: DEVELOPER API CONSOLE -->
       <section id="panel-console" class="tab-panel">
+
         <div class="card" style="margin-bottom: 1.5rem;">
           <h3 style="font-family: 'Outfit'; margin-bottom: 1rem; font-size: 1.1rem;">Developer Endpoint Playground</h3>
           
@@ -304,11 +411,14 @@
               <option value="HEALTH_LIVE">GET /health/live (Liveness Probe)</option>
               <option value="HEALTH_READINESS">GET /health (Readiness Probe)</option>
               <option value="DASHBOARD_SPEND">GET /dashboard/spend (Live Spend Metrics)</option>
+              <option value="DEMO_RUN">POST /demo/run (Run Live Demo Scenario)</option>
+              <option value="DEMO_RESET">POST /demo/reset (Reset Demo Spend Environment)</option>
               <option value="CHAT_V1">POST /v1/chat (LLM Request + Budget Gate)</option>
               <option value="CREATE_TEAM">POST /budgets/teams (Create Team Policy)</option>
               <option value="CREATE_AGENT">POST /budgets/agents (Create Agent Policy)</option>
               <option value="CREATE_SESSION">POST /budgets/sessions (Start Session Cap)</option>
               <option value="GET_AUDIT">GET /audit (Audit Log Stream)</option>
+
             </select>
             <button class="btn btn-primary" onclick="runExplorerRequest()">Execute Request</button>
             <button class="btn btn-secondary" onclick="copyAsCurl()">Copy as cURL</button>
