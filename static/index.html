@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agent Governance Command Center — PS-8.1</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Crete+Round:ital@0;1&family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Crete+Round:ital@0;1&family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="/static/css/dashboard.css?v=3.0">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -28,31 +31,48 @@
     <ul class="nav-list">
       <li class="nav-item active">
         <button id="nav-btn-command" onclick="switchTab('command')">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
           Command Center
         </button>
       </li>
       <li class="nav-item">
         <button id="nav-btn-policies" onclick="switchTab('policies')">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+          </svg>
           Policy Configuration
         </button>
       </li>
       <li class="nav-item">
         <button id="nav-btn-demo" onclick="switchTab('demo')">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
           Scenario Simulator
         </button>
       </li>
       <li class="nav-item">
         <button id="nav-btn-sandbox" onclick="switchTab('sandbox')">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
           Sandbox & Logs
         </button>
       </li>
       <li class="nav-item">
         <button id="nav-btn-console" onclick="switchTab('console')">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
           API Console
         </button>
       </li>
@@ -66,8 +86,9 @@
         <h2 id="page-title">Management Command Center</h2>
       </div>
       <div class="header-actions">
-        <button class="btn btn-primary" onclick="switchTab('demo'); runDemoScenarioGenerator();" style="font-size: 0.85rem; padding: 0.5rem 1.1rem; border-radius: 20px;">
-           Trigger Demo Scenario
+        <button class="btn btn-primary" onclick="switchTab('demo'); runDemoScenarioGenerator();"
+          style="font-size: 0.85rem; padding: 0.5rem 1.1rem; border-radius: 20px;">
+          Trigger Demo Scenario
         </button>
         <div id="health-pill" class="status-pill" id="system-health-status">
           <span class="status-dot"></span>
@@ -80,26 +101,33 @@
 
       <!-- TAB 1: GOVERNANCE COMMAND CENTER -->
       <section id="panel-command" class="tab-panel active">
-        
+
         <!-- Live Runaway Threat Center Alert Widget -->
         <div id="runaway-incident-banner" class="card threat-critical" style="margin-bottom: 2rem; display: none;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
             <div>
               <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
                 <span class="badge badge-block" style="animation: pulse-green 1s infinite;">INCIDENT DETECTED</span>
-                <h3 class="pulsate-text" style="font-family: 'Crete Round'; font-size: 1.25rem; font-weight: 700; color: #B91C1C;">Runaway Agent Action Required</h3>
+                <h3 class="pulsate-text"
+                  style="font-family: 'Crete Round'; font-size: 1.25rem; font-weight: 700; color: #B91C1C;">Runaway
+                  Agent Action Required</h3>
               </div>
               <p style="font-size: 0.88rem; color: var(--text-secondary); max-width: 750px;">
-                An agent has triggered the <strong>20% hourly runaway spending threshold</strong> (loop protection). Call interception has been activated at the infrastructure layer to prevent unlimited cost overruns.
+                An agent has triggered the <strong>20% hourly runaway spending threshold</strong> (loop protection).
+                Call interception has been activated at the infrastructure layer to prevent unlimited cost overruns.
               </p>
               <div id="incident-agent-list" style="margin-top: 1rem;">
                 <!-- Paused agents rendered dynamically with Quick Unpause -->
               </div>
             </div>
             <div>
-              <div style="background-color: #FEF2F2; border: 1px solid #FECACA; padding: 0.75rem 1.25rem; border-radius: var(--radius-sm); text-align: center;">
-                <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #B91C1C;">Estimated Costs Saved</div>
-                <div id="estimated-savings-value" style="font-family: 'Crete Round'; font-size: 1.6rem; font-weight: 700; color: #991B1B;">$0.0000</div>
+              <div
+                style="background-color: #FEF2F2; border: 1px solid #FECACA; padding: 0.75rem 1.25rem; border-radius: var(--radius-sm); text-align: center;">
+                <div
+                  style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #B91C1C;">
+                  Estimated Costs Saved</div>
+                <div id="estimated-savings-value"
+                  style="font-family: 'Crete Round'; font-size: 1.6rem; font-weight: 700; color: #991B1B;">$0.0000</div>
               </div>
             </div>
           </div>
@@ -124,13 +152,15 @@
             <div class="card-header">
               <span class="card-title">Total Infrastructure Spend</span>
             </div>
-            <div id="total-spend-val" class="card-val" style="color: var(--success); text-shadow: 0 0 10px rgba(16, 185, 129, 0.2);">$0.0000</div>
+            <div id="total-spend-val" class="card-val"
+              style="color: var(--success); text-shadow: 0 0 10px rgba(16, 185, 129, 0.2);">$0.0000</div>
           </div>
           <div class="card">
             <div class="card-header">
               <span class="card-title">Protected Loop Incidents</span>
             </div>
-            <div id="count-loop-pauses" class="card-val" style="color: var(--pause); text-shadow: 0 0 10px rgba(139, 92, 246, 0.2);">0</div>
+            <div id="count-loop-pauses" class="card-val"
+              style="color: var(--pause); text-shadow: 0 0 10px rgba(139, 92, 246, 0.2);">0</div>
           </div>
         </div>
 
@@ -178,7 +208,7 @@
 
         <!-- Split Grid Dashboard Layout -->
         <div class="dashboard-grid-layout">
-          
+
           <!-- LEFT: Charts & Monthly progress grids -->
           <div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
@@ -219,12 +249,14 @@
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
                 <div>
                   <h3 style="font-family: 'Outfit'; font-size: 1.05rem;">Active Session Monitor</h3>
-                  <p style="font-size: 0.75rem; color: var(--text-muted);">Tracking lowest tier session caps ($2.00 limit)</p>
+                  <p style="font-size: 0.75rem; color: var(--text-muted);">Tracking lowest tier session caps ($2.00
+                    limit)</p>
                 </div>
                 <span class="badge badge-allow" style="font-size: 0.7rem;" id="session-count-badge">0 Active</span>
               </div>
-              
-              <div id="sessions-visual-container" style="display: flex; flex-direction: column; gap: 1rem; max-height: 520px; overflow-y: auto; padding-right: 0.25rem;">
+
+              <div id="sessions-visual-container"
+                style="display: flex; flex-direction: column; gap: 1rem; max-height: 520px; overflow-y: auto; padding-right: 0.25rem;">
                 <!-- Sessions listed dynamically -->
                 <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 2rem;">
                   No sessions active. Run scenarios to spin up sessions.
@@ -235,9 +267,11 @@
             <!-- Runaway threat history logs -->
             <div class="card">
               <h3 style="font-family: 'Outfit'; font-size: 1.05rem; margin-bottom: 1rem;">Runaway Threat History</h3>
-              <div id="loop-incident-logs-list" style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.8rem; max-height: 250px; overflow-y: auto;">
+              <div id="loop-incident-logs-list"
+                style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.8rem; max-height: 250px; overflow-y: auto;">
                 <!-- Logs list rendered dynamically -->
-                <div style="color: var(--text-muted); text-align: center; padding: 1.5rem;">No loops intercepted yet.</div>
+                <div style="color: var(--text-muted); text-align: center; padding: 1.5rem;">No loops intercepted yet.
+                </div>
               </div>
             </div>
           </div>
@@ -249,9 +283,10 @@
       <!-- TAB 2: POLICY & BUDGET CONFIGURATION HUB -->
       <section id="panel-policies" class="tab-panel">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-          
+
           <div class="card">
-            <h3 style="font-family: 'Outfit'; margin-bottom: 1.25rem; font-size: 1.15rem; color: #fff;">Configure Team Monthly Budget</h3>
+            <h3 style="font-family: 'Outfit'; margin-bottom: 1.25rem; font-size: 1.15rem; color: #fff;">Configure Team
+              Monthly Budget</h3>
             <form id="form-create-team" onsubmit="handleCreateTeam(event)">
               <div class="form-group">
                 <label>Team Name</label>
@@ -266,11 +301,13 @@
           </div>
 
           <div class="card">
-            <h3 style="font-family: 'Outfit'; margin-bottom: 1.25rem; font-size: 1.15rem; color: #fff;">Configure Agent Monthly Budget</h3>
+            <h3 style="font-family: 'Outfit'; margin-bottom: 1.25rem; font-size: 1.15rem; color: #fff;">Configure Agent
+              Monthly Budget</h3>
             <form id="form-create-agent" onsubmit="handleCreateAgent(event)">
               <div class="form-group">
                 <label>Team ID (UUID)</label>
-                <input type="text" id="agent-team-id" class="form-control" placeholder="Paste existing Team UUID" required>
+                <input type="text" id="agent-team-id" class="form-control" placeholder="Paste existing Team UUID"
+                  required>
               </div>
               <div class="form-group">
                 <label>Agent Name</label>
@@ -295,8 +332,11 @@
         </div>
 
         <div class="card" style="margin-top: 2rem;">
-          <h3 style="font-family: 'Crete Round'; margin-bottom: 1.25rem; font-size: 1.15rem; color: var(--text-primary);">Start Active Session Budget Cap</h3>
-          <form id="form-create-session" onsubmit="handleCreateSession(event)" style="display: flex; gap: 1rem; align-items: flex-end;">
+          <h3
+            style="font-family: 'Crete Round'; margin-bottom: 1.25rem; font-size: 1.15rem; color: var(--text-primary);">
+            Start Active Session Budget Cap</h3>
+          <form id="form-create-session" onsubmit="handleCreateSession(event)"
+            style="display: flex; gap: 1rem; align-items: flex-end;">
             <div class="form-group" style="flex: 1; margin: 0;">
               <label>Agent ID (UUID)</label>
               <input type="text" id="sess-agent-id" class="form-control" placeholder="Paste Agent UUID" required>
@@ -313,25 +353,29 @@
 
       <!-- TAB 3: AGENT SANDBOX & AUDIT LOGS -->
       <section id="panel-sandbox" class="tab-panel">
-        
+
         <!-- 1-Click Preset Shortcuts -->
         <div class="card" style="margin-bottom: 2rem;">
-          <h3 style="font-family: 'Crete Round'; font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-primary);">1-Click Policy Presets & Simulation Shortcuts</h3>
-          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Click any preset to automatically configure test entities and trigger live governance evaluation:</p>
+          <h3 style="font-family: 'Crete Round'; font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-primary);">
+            1-Click Policy Presets & Simulation Shortcuts</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Click any preset to
+            automatically configure test entities and trigger live governance evaluation:</p>
           <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
             <button class="preset-btn" onclick="runPresetSim('ALLOW')">Preset 1: Normal Allow</button>
             <button class="preset-btn" onclick="runPresetSim('WARN')">Preset 2: Trigger 80% Warning</button>
             <button class="preset-btn" onclick="runPresetSim('REROUTE')">Preset 3: Trigger Model Reroute</button>
             <button class="preset-btn" onclick="runPresetSim('BLOCK')">Preset 4: Trigger Hard Session Block</button>
-            <button class="preset-btn" onclick="runPresetSim('PAUSE')">Preset 5: Trigger Runaway Loop Protection</button>
+            <button class="preset-btn" onclick="runPresetSim('PAUSE')">Preset 5: Trigger Runaway Loop
+              Protection</button>
           </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
-          
+
           <!-- Chat Runner -->
           <div class="card">
-            <h3 style="font-family: 'Crete Round'; margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-primary);">Interactive Chat Sandbox</h3>
+            <h3 style="font-family: 'Crete Round'; margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-primary);">
+              Interactive Chat Sandbox</h3>
 
             <form onsubmit="handleSendChat(event)">
               <div class="form-group">
@@ -344,7 +388,8 @@
               </div>
               <div class="form-group">
                 <label>Message Prompt</label>
-                <textarea id="chat-prompt" class="form-control" rows="3" placeholder="Enter prompt to test budget gate..." required></textarea>
+                <textarea id="chat-prompt" class="form-control" rows="3"
+                  placeholder="Enter prompt to test budget gate..." required></textarea>
               </div>
               <button type="submit" class="btn btn-primary">Send Prompt</button>
             </form>
@@ -352,13 +397,16 @@
 
           <!-- Live Gate Result -->
           <div class="card">
-            <h3 style="font-family: 'Crete Round'; margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-primary);">Live Gate Evaluation Output</h3>
+            <h3 style="font-family: 'Crete Round'; margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-primary);">
+              Live Gate Evaluation Output</h3>
             <div id="chat-result-box" style="display: none;">
               <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; align-items: center;">
                 <span id="chat-event-badge" class="badge">ALLOW</span>
-                <span id="chat-model-badge" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">llama-3.3-70b-versatile</span>
+                <span id="chat-model-badge"
+                  style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">llama-3.3-70b-versatile</span>
               </div>
-              <div style="margin-bottom: 1rem; padding: 0.85rem; background: #F8FAFC; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.9rem;">
+              <div
+                style="margin-bottom: 1rem; padding: 0.85rem; background: #F8FAFC; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.9rem;">
                 <strong>Response:</strong>
                 <p id="chat-response-text" style="margin-top: 0.3rem;"></p>
               </div>
@@ -378,8 +426,10 @@
         <div class="card">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <div>
-              <h3 style="font-family: 'Crete Round'; font-size: 1.1rem; color: var(--text-primary);">Spend Event Audit Stream</h3>
-              <p style="font-size: 0.8rem; color: var(--text-muted);">Click any row to open the full inspection side drawer.</p>
+              <h3 style="font-family: 'Crete Round'; font-size: 1.1rem; color: var(--text-primary);">Spend Event Audit
+                Stream</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted);">Click any row to open the full inspection side
+                drawer.</p>
             </div>
             <button class="btn btn-secondary" onclick="loadAuditLogs()">Refresh Stream</button>
           </div>
@@ -410,18 +460,31 @@
         <div class="card" style="margin-bottom: 2rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
             <div>
-              <h3 style="font-family: 'Crete Round'; font-size: 1.25rem; margin-bottom: 0.4rem; color: var(--text-primary);">Production Multi-Agent Governance Demo Generator</h3>
+              <h3
+                style="font-family: 'Crete Round'; font-size: 1.25rem; margin-bottom: 0.4rem; color: var(--text-primary);">
+                Production Multi-Agent Governance Demo Generator</h3>
               <p style="font-size: 0.88rem; color: var(--text-secondary); max-width: 650px;">
-                Provision a multi-agent scenario and fire real concurrent traffic (via <code>asyncio.gather</code>) to show every outcome (<strong>ALLOW</strong>, <strong>WARN</strong>, <strong>BLOCK</strong>, <strong>REROUTE</strong>, <strong>PAUSE</strong>) live, backed by real Groq calls and atomic Redis/Postgres state.
+                Provision a multi-agent scenario and fire real concurrent traffic (via <code>asyncio.gather</code>) to
+                show every outcome (<strong>ALLOW</strong>, <strong>WARN</strong>, <strong>BLOCK</strong>,
+                <strong>REROUTE</strong>, <strong>PAUSE</strong>) live, backed by real Groq calls and atomic
+                Redis/Postgres state.
               </p>
             </div>
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
               <button id="btn-run-demo" class="btn btn-primary" onclick="runDemoScenarioGenerator()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
                 Run demo scenario
               </button>
               <button id="btn-cleanup-demo" class="btn btn-secondary" onclick="cleanupDemoScenario()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
                 Cleanup Demo Data
               </button>
             </div>
@@ -429,15 +492,19 @@
         </div>
 
         <!-- Loading State Indicator -->
-        <div id="demo-loading-indicator" class="card" style="display: none; text-align: center; padding: 2.5rem; margin-bottom: 2rem;">
-          <div style="font-size: 1.1rem; font-weight: 600; color: var(--info); margin-bottom: 0.5rem;">Provisioning Scenario & Firing Concurrent Traffic...</div>
-          <p style="font-size: 0.85rem; color: var(--text-secondary);">Executing <code>asyncio.gather</code> concurrent LLM requests against Budget Gate middleware...</p>
+        <div id="demo-loading-indicator" class="card"
+          style="display: none; text-align: center; padding: 2.5rem; margin-bottom: 2rem;">
+          <div style="font-size: 1.1rem; font-weight: 600; color: var(--info); margin-bottom: 0.5rem;">Provisioning
+            Scenario & Firing Concurrent Traffic...</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">Executing <code>asyncio.gather</code> concurrent
+            LLM requests against Budget Gate middleware...</p>
         </div>
 
         <!-- Demo Summary Table -->
         <div id="demo-results-card" class="card" style="margin-bottom: 2rem; display: none;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h3 style="font-family: 'Crete Round'; font-size: 1.1rem; color: var(--text-primary);">Live Enforcement Outcomes & Summary Table</h3>
+            <h3 style="font-family: 'Crete Round'; font-size: 1.1rem; color: var(--text-primary);">Live Enforcement
+              Outcomes & Summary Table</h3>
             <span id="demo-duration-badge" class="badge badge-reroute">Duration: 0.0s</span>
           </div>
 
@@ -468,10 +535,19 @@
         </div>
 
         <!-- Default Placeholder Card -->
-        <div id="demo-placeholder-card" class="card" style="text-align: center; padding: 3rem; color: var(--text-muted); margin-bottom: 2rem;">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 48px; height: 48px; margin: 0 auto 1rem; opacity: 0.5;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <p style="font-size: 1rem; font-weight: 500; color: var(--text-secondary);">Click <strong>"Run demo scenario"</strong> above to provision agents and fire live concurrent traffic.</p>
-          <p style="font-size: 0.825rem; margin-top: 0.4rem;">The scenario will test atomic Redis counters under load and display real database enforcement outcomes in a live summary table.</p>
+        <div id="demo-placeholder-card" class="card"
+          style="text-align: center; padding: 3rem; color: var(--text-muted); margin-bottom: 2rem;">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            style="width: 48px; height: 48px; margin: 0 auto 1rem; opacity: 0.5;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p style="font-size: 1rem; font-weight: 500; color: var(--text-secondary);">Click <strong>"Run demo
+              scenario"</strong> above to provision agents and fire live concurrent traffic.</p>
+          <p style="font-size: 0.825rem; margin-top: 0.4rem;">The scenario will test atomic Redis counters under load
+            and display real database enforcement outcomes in a live summary table.</p>
         </div>
       </section>
 
@@ -481,9 +557,10 @@
       <section id="panel-console" class="tab-panel">
 
         <div class="card" style="margin-bottom: 1.5rem;">
-          <h3 style="font-family: 'Crete Round'; margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-primary);">Developer Endpoint Playground</h3>
+          <h3 style="font-family: 'Crete Round'; margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-primary);">
+            Developer Endpoint Playground</h3>
 
-          
+
           <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
             <select id="endpoint-select" class="form-control" onchange="updateExplorerInputs()" style="flex: 1;">
               <option value="HEALTH_LIVE">GET /health/live (Liveness Probe)</option>
@@ -505,7 +582,8 @@
 
           <div id="explorer-body-group" class="form-group" style="display: none;">
             <label>Request Body Payload (JSON)</label>
-            <textarea id="explorer-json-input" class="form-control" rows="5" style="font-family: 'JetBrains Mono';"></textarea>
+            <textarea id="explorer-json-input" class="form-control" rows="5"
+              style="font-family: 'JetBrains Mono';"></textarea>
           </div>
         </div>
 
@@ -513,7 +591,8 @@
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
             <h4 style="font-family: 'Outfit'; font-size: 0.95rem; color: var(--text-secondary);">Response Payload</h4>
             <div style="display: flex; gap: 0.75rem; align-items: center;">
-              <span id="explorer-latency" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Latency: -- ms</span>
+              <span id="explorer-latency"
+                style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Latency: -- ms</span>
               <span id="explorer-status-badge" class="badge">Awaiting Execution</span>
             </div>
           </div>
@@ -572,6 +651,8 @@
     </div>
   </div>
 
-  <script src="/static/js/dashboard.js"></script>
+  <script src="/static/js/dashboard.js?v=5.0"></script>
+
 </body>
+
 </html>

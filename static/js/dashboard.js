@@ -115,7 +115,7 @@ async function loadDashboardMetrics() {
     // Render Agents Grid & Check for Paused/Runaway agents
     const agentsGrid = document.getElementById("agents-grid");
     agentsGrid.innerHTML = "";
-    
+
     let pausedAgents = [];
 
     (data.agents || []).forEach(agent => {
@@ -180,7 +180,7 @@ async function checkAndRenderAgentPause(agentId) {
     const res = await fetch(`/budgets/agents/${agentId}/status`);
     if (!res.ok) return;
     const statusData = await res.json();
-    
+
     const badge = document.getElementById(`agent-badge-${agentId}`);
     const unpauseBtn = document.getElementById(`unpause-btn-container-${agentId}`);
     const card = document.getElementById(`agent-card-${agentId}`);
@@ -195,7 +195,7 @@ async function checkAndRenderAgentPause(agentId) {
         card.style.borderColor = "var(--pause)";
         card.style.background = "linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(12, 16, 32, 0.9))";
       }
-      
+
       // Update runaway threat banner list
       updateThreatBanner(statusData);
     }
@@ -209,14 +209,14 @@ let activeRunaways = new Set();
 function updateThreatBanner(agentStatus) {
   const banner = document.getElementById("runaway-incident-banner");
   const list = document.getElementById("incident-agent-list");
-  
+
   activeRunaways.add(agentStatus.agent_id);
   banner.style.display = "block";
 
   // Re-render threat list
   list.innerHTML = "";
   let threatCount = 0;
-  
+
   latestSpendData.agents.forEach(agent => {
     if (activeRunaways.has(agent.agent_id)) {
       threatCount++;
@@ -262,16 +262,16 @@ async function triggerUnpauseAgent(agentId) {
       method: "POST"
     });
     const result = await res.json();
-    
+
     if (res.ok) {
       alert(result.message);
       activeRunaways.delete(agentId);
-      
+
       // Update UI if no remaining runaways
       if (activeRunaways.size === 0) {
         document.getElementById("runaway-incident-banner").style.display = "none";
       }
-      
+
       // Reload metrics
       loadDashboardMetrics();
     } else {
@@ -286,7 +286,7 @@ async function triggerUnpauseAgent(agentId) {
 function renderSessionsGrid(sessions) {
   const container = document.getElementById("sessions-visual-container");
   const countBadge = document.getElementById("session-count-badge");
-  
+
   if (sessions.length === 0) {
     container.innerHTML = `
       <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 2rem;">
@@ -459,7 +459,7 @@ async function runPresetSim(type) {
   document.getElementById("chat-prompt").value = `Simulating governance policy for preset ${type}.`;
 
   // Submit chat request automatically
-  const fakeEvent = { preventDefault: () => {} };
+  const fakeEvent = { preventDefault: () => { } };
   await handleSendChat(fakeEvent);
 
   // If preset is PAUSE, trigger a second request immediately to exceed the 20% limit (since runaway requires >=2 requests)
@@ -502,7 +502,7 @@ async function handleSendChat(e) {
   if (res.ok) {
     const eventType = data.event_type;
     eventBadge.innerText = eventType.toUpperCase();
-    
+
     if (eventType === "allow") eventBadge.className = "badge badge-allow";
     else if (eventType === "warn") eventBadge.className = "badge badge-warn";
     else if (eventType === "reroute") eventBadge.className = "badge badge-reroute";
@@ -516,7 +516,7 @@ async function handleSendChat(e) {
     // Check if error is due to PAUSE or BLOCK
     const details = data.detail || {};
     const reason = details.reason || "";
-    
+
     if (reason === "agent_paused_runaway_detected") {
       eventBadge.innerText = "PAUSE";
       eventBadge.className = "badge badge-pause";
@@ -556,9 +556,9 @@ async function loadAuditLogs() {
       if (log.event_type === "warn") { warnCount++; badgeClass = "badge-warn"; }
       if (log.event_type === "reroute") { rerouteCount++; badgeClass = "badge-reroute"; }
       if (log.event_type === "block") { blockCount++; badgeClass = "badge-block"; }
-      if (log.event_type === "pause") { 
-        pauseCount++; 
-        badgeClass = "badge-pause"; 
+      if (log.event_type === "pause") {
+        pauseCount++;
+        badgeClass = "badge-pause";
         loopIncidentHtml += `
           <div style="padding: 0.5rem; background-color: rgba(139, 92, 246, 0.05); border-left: 3px solid var(--pause); border-radius: 4px;">
             <div style="display:flex; justify-content:space-between; font-weight:600; color: #fff;">
@@ -566,7 +566,7 @@ async function loadAuditLogs() {
               <span>${new Date(log.timestamp).toLocaleTimeString()}</span>
             </div>
             <div style="color:var(--text-secondary); font-size:0.75rem; margin-top:0.15rem;">
-              Agent <code>${log.agent_id.substring(0,8)}...</code> halted overnight. Saved approx $0.05.
+              Agent <code>${log.agent_id.substring(0, 8)}...</code> halted overnight. Saved approx $0.05.
             </div>
           </div>
         `;
@@ -734,120 +734,120 @@ function renderDashboardCharts(spendData, eventCounts) {
         },
         cutout: "68%"
       }
+    }
+}
+
+  // Drawer Side Modal Controls
+
+  function openDrawerByIndex(idx) {
+    const log = currentAuditLogs[idx];
+    if (!log) return;
+
+    document.getElementById("drw-id").innerText = log.id || "N/A";
+    document.getElementById("drw-time").innerText = new Date(log.timestamp).toLocaleString();
+    document.getElementById("drw-event-type").innerText = log.event_type.toUpperCase();
+    document.getElementById("drw-model").innerText = log.model_used;
+    document.getElementById("drw-cost").innerText = `$${log.cost_usd.toFixed(6)}`;
+    document.getElementById("drw-tokens").innerText = `${log.tokens_in} Tokens In / ${log.tokens_out} Tokens Out`;
+    document.getElementById("drw-session").innerText = log.session_id;
+    document.getElementById("drw-agent").innerText = log.agent_id;
+    document.getElementById("drw-team").innerText = log.team_id;
+
+    document.getElementById("drawer-overlay").classList.add("active");
+    document.getElementById("drawer").classList.add("active");
   }
-}
 
-// Drawer Side Modal Controls
+  function closeDrawer() {
+    document.getElementById("drawer-overlay").classList.remove("active");
+    document.getElementById("drawer").classList.remove("active");
+  }
 
-function openDrawerByIndex(idx) {
-  const log = currentAuditLogs[idx];
-  if (!log) return;
+  // Developer API Console Handlers
+  const SAMPLE_PAYLOADS = {
+    HEALTH_LIVE: { method: "GET", url: "/health/live" },
+    HEALTH_READINESS: { method: "GET", url: "/health" },
+    DASHBOARD_SPEND: { method: "GET", url: "/dashboard/spend" },
+    DEMO_RUN: {
+      method: "POST", url: "/demo/run",
+      body: { num_agents: 5, requests_per_agent: 5, team_budget_usd: 2.00, agent_budget_usd: 0.30, session_budget_usd: 0.05, concurrency: true }
+    },
+    DEMO_CLEANUP: { method: "DELETE", url: "/demo/cleanup" },
+    CHAT_V1: {
+      method: "POST", url: "/v1/chat",
+      body: { session_id: "ENTER_SESSION_UUID", agent_id: "ENTER_AGENT_UUID", message: "Explain quantum computing." }
+    },
+    CREATE_TEAM: {
+      method: "POST", url: "/budgets/teams",
+      body: { name: "Finance Team", monthly_budget_usd: 1000.00 }
+    },
+    CREATE_AGENT: {
+      method: "POST", url: "/budgets/agents",
+      body: { team_id: "ENTER_TEAM_UUID", name: "Finance Bot", monthly_budget_usd: 100.00, preferred_model: "llama-3.3-70b-versatile", fallback_model: "llama-3.1-8b-instant" }
+    },
+    CREATE_SESSION: {
+      method: "POST", url: "/budgets/sessions",
+      body: { agent_id: "ENTER_AGENT_UUID", budget_usd: 5.00 }
+    },
+    UNPAUSE_AGENT: {
+      method: "POST", url: "/budgets/agents/ENTER_AGENT_UUID/unpause"
+    },
+    AGENT_STATUS: {
+      method: "GET", url: "/budgets/agents/ENTER_AGENT_UUID/status"
+    },
+    GET_AUDIT: { method: "GET", url: "/audit" }
+  };
 
-  document.getElementById("drw-id").innerText = log.id || "N/A";
-  document.getElementById("drw-time").innerText = new Date(log.timestamp).toLocaleString();
-  document.getElementById("drw-event-type").innerText = log.event_type.toUpperCase();
-  document.getElementById("drw-model").innerText = log.model_used;
-  document.getElementById("drw-cost").innerText = `$${log.cost_usd.toFixed(6)}`;
-  document.getElementById("drw-tokens").innerText = `${log.tokens_in} Tokens In / ${log.tokens_out} Tokens Out`;
-  document.getElementById("drw-session").innerText = log.session_id;
-  document.getElementById("drw-agent").innerText = log.agent_id;
-  document.getElementById("drw-team").innerText = log.team_id;
+  // Demo Scenario Studio Handlers
+  async function runDemoScenarioGenerator() {
+    const loading = document.getElementById("demo-loading-indicator");
+    const resultsCard = document.getElementById("demo-results-card");
+    const placeholder = document.getElementById("demo-placeholder-card");
+    const btnRun = document.getElementById("btn-run-demo");
 
-  document.getElementById("drawer-overlay").classList.add("active");
-  document.getElementById("drawer").classList.add("active");
-}
+    placeholder.style.display = "none";
+    resultsCard.style.display = "none";
+    loading.style.display = "block";
+    if (btnRun) btnRun.disabled = true;
 
-function closeDrawer() {
-  document.getElementById("drawer-overlay").classList.remove("active");
-  document.getElementById("drawer").classList.remove("active");
-}
+    try {
+      const res = await fetch("/demo/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          num_agents: 5,
+          requests_per_agent: 15,
+          team_budget_usd: 2.00,
+          agent_budget_usd: 0.30,
+          session_budget_usd: 0.05,
+          concurrency: true
+        })
+      });
 
-// Developer API Console Handlers
-const SAMPLE_PAYLOADS = {
-  HEALTH_LIVE: { method: "GET", url: "/health/live" },
-  HEALTH_READINESS: { method: "GET", url: "/health" },
-  DASHBOARD_SPEND: { method: "GET", url: "/dashboard/spend" },
-  DEMO_RUN: {
-    method: "POST", url: "/demo/run",
-    body: { num_agents: 5, requests_per_agent: 5, team_budget_usd: 2.00, agent_budget_usd: 0.30, session_budget_usd: 0.05, concurrency: true }
-  },
-  DEMO_CLEANUP: { method: "DELETE", url: "/demo/cleanup" },
-  CHAT_V1: {
-    method: "POST", url: "/v1/chat",
-    body: { session_id: "ENTER_SESSION_UUID", agent_id: "ENTER_AGENT_UUID", message: "Explain quantum computing." }
-  },
-  CREATE_TEAM: {
-    method: "POST", url: "/budgets/teams",
-    body: { name: "Finance Team", monthly_budget_usd: 1000.00 }
-  },
-  CREATE_AGENT: {
-    method: "POST", url: "/budgets/agents",
-    body: { team_id: "ENTER_TEAM_UUID", name: "Finance Bot", monthly_budget_usd: 100.00, preferred_model: "llama-3.3-70b-versatile", fallback_model: "llama-3.1-8b-instant" }
-  },
-  CREATE_SESSION: {
-    method: "POST", url: "/budgets/sessions",
-    body: { agent_id: "ENTER_AGENT_UUID", budget_usd: 5.00 }
-  },
-  UNPAUSE_AGENT: {
-    method: "POST", url: "/budgets/agents/ENTER_AGENT_UUID/unpause"
-  },
-  AGENT_STATUS: {
-    method: "GET", url: "/budgets/agents/ENTER_AGENT_UUID/status"
-  },
-  GET_AUDIT: { method: "GET", url: "/audit" }
-};
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-// Demo Scenario Studio Handlers
-async function runDemoScenarioGenerator() {
-  const loading = document.getElementById("demo-loading-indicator");
-  const resultsCard = document.getElementById("demo-results-card");
-  const placeholder = document.getElementById("demo-placeholder-card");
-  const btnRun = document.getElementById("btn-run-demo");
+      const data = await res.json();
+      const summary = data.summary || {};
+      const agents = data.agents || [];
 
-  placeholder.style.display = "none";
-  resultsCard.style.display = "none";
-  loading.style.display = "block";
-  if (btnRun) btnRun.disabled = true;
+      loading.style.display = "none";
+      resultsCard.style.display = "block";
+      if (btnRun) btnRun.disabled = false;
 
-  try {
-    const res = await fetch("/demo/run", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        num_agents: 5,
-        requests_per_agent: 15,
-        team_budget_usd: 2.00,
-        agent_budget_usd: 0.30,
-        session_budget_usd: 0.05,
-        concurrency: true
-      })
-    });
+      document.getElementById("demo-duration-badge").innerText = `Duration: ${(summary.duration_seconds || 0).toFixed(2)}s`;
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      // Render Table Body
+      const tbody = document.getElementById("demo-table-body");
+      tbody.innerHTML = "";
 
-    const data = await res.json();
-    const summary = data.summary || {};
-    const agents = data.agents || [];
+      agents.forEach(agent => {
+        const oc = agent.outcomes || {};
+        const allowCnt = oc.allow || 0;
+        const warnCnt = oc.warn || 0;
+        const blockCnt = oc.block || 0;
+        const rerouteCnt = oc.reroute || 0;
+        const pauseCnt = oc.pause || 0;
 
-    loading.style.display = "none";
-    resultsCard.style.display = "block";
-    if (btnRun) btnRun.disabled = false;
-
-    document.getElementById("demo-duration-badge").innerText = `Duration: ${(summary.duration_seconds || 0).toFixed(2)}s`;
-
-    // Render Table Body
-    const tbody = document.getElementById("demo-table-body");
-    tbody.innerHTML = "";
-
-    agents.forEach(agent => {
-      const oc = agent.outcomes || {};
-      const allowCnt = oc.allow || 0;
-      const warnCnt = oc.warn || 0;
-      const blockCnt = oc.block || 0;
-      const rerouteCnt = oc.reroute || 0;
-      const pauseCnt = oc.pause || 0;
-
-      tbody.innerHTML += `
+        tbody.innerHTML += `
         <tr>
           <td><strong>${agent.name}</strong> <br><code style="font-size: 0.72rem; color: var(--text-secondary);">${agent.agent_id}</code></td>
           <td style="font-weight: 600;">${agent.requests_sent}</td>
@@ -860,15 +860,15 @@ async function runDemoScenarioGenerator() {
           <td style="color: var(--text-secondary);">$${(agent.budget_usd || 0).toFixed(4)}</td>
         </tr>
       `;
-    });
+      });
 
-    // Render Summary Table Footer
-    const tfoot = document.getElementById("demo-table-foot");
-    const violationStatus = summary.any_budget_exceeded 
-      ? `<span class="badge badge-block">VIOLATION DETECTED</span>`
-      : `<span class="badge badge-allow">100% ATOMIC PASSED</span>`;
+      // Render Summary Table Footer
+      const tfoot = document.getElementById("demo-table-foot");
+      const violationStatus = summary.any_budget_exceeded
+        ? `<span class="badge badge-block">VIOLATION DETECTED</span>`
+        : `<span class="badge badge-allow">100% ATOMIC PASSED</span>`;
 
-    tfoot.innerHTML = `
+      tfoot.innerHTML = `
       <tr>
         <td>SUMMARY TOTALS</td>
         <td>${summary.total_requests || 0} Req</td>
@@ -878,119 +878,119 @@ async function runDemoScenarioGenerator() {
       </tr>
     `;
 
-    // Refresh Dashboard metrics
-    loadDashboardMetrics();
-
-  } catch (err) {
-    loading.style.display = "none";
-    placeholder.style.display = "block";
-    if (btnRun) btnRun.disabled = false;
-    alert("Error executing demo scenario: " + err.message);
-  }
-}
-
-async function cleanupDemoScenario() {
-  if (!confirm("Are you sure you want to clean up all demo-* teams, agents, sessions, and spend events?")) return;
-
-  try {
-    const res = await fetch("/demo/cleanup", { method: "DELETE" });
-    if (res.ok) {
-      alert("Demo resources and spend counters cleaned up successfully.");
-      document.getElementById("demo-results-card").style.display = "none";
-      document.getElementById("demo-placeholder-card").style.display = "block";
-      
-      // Clear incident variables
-      activeRunaways.clear();
-      document.getElementById("runaway-incident-banner").style.display = "none";
-      
+      // Refresh Dashboard metrics
       loadDashboardMetrics();
+
+    } catch (err) {
+      loading.style.display = "none";
+      placeholder.style.display = "block";
+      if (btnRun) btnRun.disabled = false;
+      alert("Error executing demo scenario: " + err.message);
     }
-  } catch (err) {
-    alert("Error cleaning up demo scenario: " + err.message);
   }
-}
 
-function updateExplorerInputs() {
-  const sel = document.getElementById("endpoint-select").value;
-  const cfg = SAMPLE_PAYLOADS[sel];
-  const group = document.getElementById("explorer-body-group");
+  async function cleanupDemoScenario() {
+    if (!confirm("Are you sure you want to clean up all demo-* teams, agents, sessions, and spend events?")) return;
 
-  if (cfg && cfg.body) {
-    group.style.display = "block";
-    document.getElementById("explorer-json-input").value = JSON.stringify(cfg.body, null, 2);
-  } else {
-    group.style.display = "none";
-    document.getElementById("explorer-json-input").value = "";
-  }
-}
+    try {
+      const res = await fetch("/demo/cleanup", { method: "DELETE" });
+      if (res.ok) {
+        alert("Demo resources and spend counters cleaned up successfully.");
+        document.getElementById("demo-results-card").style.display = "none";
+        document.getElementById("demo-placeholder-card").style.display = "block";
 
-async function runExplorerRequest() {
-  const sel = document.getElementById("endpoint-select").value;
-  const cfg = SAMPLE_PAYLOADS[sel];
-  if (!cfg) return;
+        // Clear incident variables
+        activeRunaways.clear();
+        document.getElementById("runaway-incident-banner").style.display = "none";
 
-  const badge = document.getElementById("explorer-status-badge");
-  const latency = document.getElementById("explorer-latency");
-  const output = document.getElementById("explorer-json-output");
-
-  badge.className = "badge";
-  badge.innerText = "Executing...";
-  badge.style.backgroundColor = "var(--info-bg)";
-  badge.style.color = "var(--info)";
-
-  const startTime = performance.now();
-
-  try {
-    const opts = { method: cfg.method, headers: {} };
-    if (cfg.body) {
-      const rawText = document.getElementById("explorer-json-input").value;
-      opts.headers["Content-Type"] = "application/json";
-      opts.body = rawText;
+        loadDashboardMetrics();
+      }
+    } catch (err) {
+      alert("Error cleaning up demo scenario: " + err.message);
     }
+  }
 
-    const res = await fetch(cfg.url, opts);
-    const json = await res.json();
-    const elapsed = Math.round(performance.now() - startTime);
+  function updateExplorerInputs() {
+    const sel = document.getElementById("endpoint-select").value;
+    const cfg = SAMPLE_PAYLOADS[sel];
+    const group = document.getElementById("explorer-body-group");
 
-    latency.innerText = `Latency: ${elapsed} ms`;
-    output.innerText = JSON.stringify(json, null, 2);
-    badge.innerText = `${res.status} ${res.statusText}`;
-
-    if (res.ok) {
-      badge.style.backgroundColor = "var(--success-bg)";
-      badge.style.color = "var(--success)";
+    if (cfg && cfg.body) {
+      group.style.display = "block";
+      document.getElementById("explorer-json-input").value = JSON.stringify(cfg.body, null, 2);
     } else {
+      group.style.display = "none";
+      document.getElementById("explorer-json-input").value = "";
+    }
+  }
+
+  async function runExplorerRequest() {
+    const sel = document.getElementById("endpoint-select").value;
+    const cfg = SAMPLE_PAYLOADS[sel];
+    if (!cfg) return;
+
+    const badge = document.getElementById("explorer-status-badge");
+    const latency = document.getElementById("explorer-latency");
+    const output = document.getElementById("explorer-json-output");
+
+    badge.className = "badge";
+    badge.innerText = "Executing...";
+    badge.style.backgroundColor = "var(--info-bg)";
+    badge.style.color = "var(--info)";
+
+    const startTime = performance.now();
+
+    try {
+      const opts = { method: cfg.method, headers: {} };
+      if (cfg.body) {
+        const rawText = document.getElementById("explorer-json-input").value;
+        opts.headers["Content-Type"] = "application/json";
+        opts.body = rawText;
+      }
+
+      const res = await fetch(cfg.url, opts);
+      const json = await res.json();
+      const elapsed = Math.round(performance.now() - startTime);
+
+      latency.innerText = `Latency: ${elapsed} ms`;
+      output.innerText = JSON.stringify(json, null, 2);
+      badge.innerText = `${res.status} ${res.statusText}`;
+
+      if (res.ok) {
+        badge.style.backgroundColor = "var(--success-bg)";
+        badge.style.color = "var(--success)";
+      } else {
+        badge.style.backgroundColor = "var(--danger-bg)";
+        badge.style.color = "var(--danger)";
+      }
+    } catch (err) {
+      badge.innerText = "Execution Failed";
       badge.style.backgroundColor = "var(--danger-bg)";
       badge.style.color = "var(--danger)";
+      output.innerText = String(err);
     }
-  } catch (err) {
-    badge.innerText = "Execution Failed";
-    badge.style.backgroundColor = "var(--danger-bg)";
-    badge.style.color = "var(--danger)";
-    output.innerText = String(err);
-  }
-}
-
-function copyAsCurl() {
-  const sel = document.getElementById("endpoint-select").value;
-  const cfg = SAMPLE_PAYLOADS[sel];
-  if (!cfg) return;
-
-  const host = window.location.origin;
-  let curl = `curl -X ${cfg.method} "${host}${cfg.url}"`;
-  
-  if (cfg.body) {
-    const rawText = document.getElementById("explorer-json-input").value;
-    curl += ` \\\n  -H "Content-Type: application/json" \\\n  -d '${rawText.replace(/\n/g, '')}'`;
   }
 
-  navigator.clipboard.writeText(curl);
-  alert("cURL command copied to clipboard!");
-}
+  function copyAsCurl() {
+    const sel = document.getElementById("endpoint-select").value;
+    const cfg = SAMPLE_PAYLOADS[sel];
+    if (!cfg) return;
 
-// Initial Load
-document.addEventListener("DOMContentLoaded", () => {
-  checkHealth();
-  loadDashboardMetrics();
-  updateExplorerInputs();
-});
+    const host = window.location.origin;
+    let curl = `curl -X ${cfg.method} "${host}${cfg.url}"`;
+
+    if (cfg.body) {
+      const rawText = document.getElementById("explorer-json-input").value;
+      curl += ` \\\n  -H "Content-Type: application/json" \\\n  -d '${rawText.replace(/\n/g, '')}'`;
+    }
+
+    navigator.clipboard.writeText(curl);
+    alert("cURL command copied to clipboard!");
+  }
+
+  // Initial Load
+  document.addEventListener("DOMContentLoaded", () => {
+    checkHealth();
+    loadDashboardMetrics();
+    updateExplorerInputs();
+  });
