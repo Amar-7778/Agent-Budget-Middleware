@@ -313,21 +313,22 @@ function renderSessionsGrid(sessions) {
       barColor = "var(--danger)";
       badgeClass = "badge-block";
       badgeText = "Locked (Closed)";
-      borderStyle = "border-color: rgba(239, 68, 68, 0.25); background: linear-gradient(135deg, rgba(239, 68, 68, 0.02), rgba(12, 16, 32, 0.9));";
+      borderStyle = "border-color: #FECACA; background-color: #FEF2F2;";
     } else if (pct >= 80) {
       barColor = "var(--warning)";
       badgeClass = "badge-warn";
       badgeText = "Warning";
-      borderStyle = "border-color: rgba(245, 158, 11, 0.25);";
+      borderStyle = "border-color: #FDE68A; background-color: #FFFBEB;";
     }
 
     container.innerHTML += `
       <div style="padding: 1rem; border: 1px solid; border-radius: var(--radius-sm); ${borderStyle} transition: all 0.2s ease;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
           <div>
-            <span style="font-size: 0.8rem; font-weight: 600; color: #fff;">Session: <code style="font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--primary);">${sess.session_id}</code></span>
+            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">Session: <code style="font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--primary);">${sess.session_id}</code></span>
             <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem;">Agent: ${sess.agent_name}</div>
           </div>
+
           <span class="badge ${badgeClass}" style="font-size: 0.68rem; padding: 0.2rem 0.5rem;">${badgeText}</span>
         </div>
         <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-secondary);">
@@ -610,8 +611,14 @@ async function loadAuditLogs() {
   }
 }
 
-// Chart.js Instances & Interactive Renderers (Theme optimized for Dark Mode)
+// Chart.js Instances & Interactive Renderers (Theme optimized for Light Blue & White Theme)
 function renderDashboardCharts(spendData, eventCounts) {
+  // Set default Chart.js font family
+  if (typeof Chart !== "undefined") {
+    Chart.defaults.font.family = "'Crete Round', Georgia, serif";
+    Chart.defaults.color = "#334155";
+  }
+
   // 1. Spend vs Budget Utilization Chart (Bar)
   const spendCtx = document.getElementById("chart-spend-utilization");
   if (spendCtx && typeof Chart !== "undefined") {
@@ -649,18 +656,18 @@ function renderDashboardCharts(spendData, eventCounts) {
           {
             label: "Current Spend ($)",
             data: spendVals,
-            backgroundColor: "rgba(16, 185, 129, 0.75)",
-            borderColor: "#10B981",
+            backgroundColor: "rgba(5, 150, 105, 0.85)",
+            borderColor: "#059669",
             borderWidth: 1.5,
-            borderRadius: 4,
+            borderRadius: 6,
           },
           {
             label: "Budget Limit ($)",
             data: budgetVals,
-            backgroundColor: "rgba(95, 91, 246, 0.15)",
-            borderColor: "#5f5bf6",
+            backgroundColor: "rgba(2, 132, 199, 0.20)",
+            borderColor: "#0284C7",
             borderWidth: 1.5,
-            borderRadius: 4,
+            borderRadius: 6,
           }
         ]
       },
@@ -668,7 +675,7 @@ function renderDashboardCharts(spendData, eventCounts) {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { labels: { color: "#9ca3af", font: { family: "Outfit", size: 10 } } },
+          legend: { labels: { color: "#0F172A", font: { family: "'Crete Round', serif", size: 11 } } },
           tooltip: {
             callbacks: {
               label: (ctx) => `${ctx.dataset.label}: $${ctx.raw.toFixed(4)}`
@@ -676,8 +683,8 @@ function renderDashboardCharts(spendData, eventCounts) {
           }
         },
         scales: {
-          x: { ticks: { color: "#9ca3af", font: { family: "Outfit", size: 9 } }, grid: { display: false } },
-          y: { ticks: { color: "#9ca3af", font: { family: "Outfit" } }, grid: { color: "rgba(255,255,255,0.05)" } }
+          x: { ticks: { color: "#334155", font: { family: "'Crete Round', serif", size: 10 } }, grid: { display: false } },
+          y: { ticks: { color: "#334155", font: { family: "'Crete Round', serif" } }, grid: { color: "#E2E8F0" } }
         }
       }
     });
@@ -694,12 +701,12 @@ function renderDashboardCharts(spendData, eventCounts) {
 
     let dataVals = [allowCnt, warnCnt, rerouteCnt, blockCnt, pauseCnt];
     let dataLabels = ["ALLOW", "WARN", "REROUTE", "BLOCK", "PAUSE"];
-    let dataColors = ["#10B981", "#F59E0B", "#3B82F6", "#EF4444", "#8B5CF6"];
+    let dataColors = ["#059669", "#D97706", "#0284C7", "#DC2626", "#7C3AED"];
 
     if (allowCnt + warnCnt + rerouteCnt + blockCnt + pauseCnt === 0) {
       dataVals = [1];
       dataLabels = ["No Telemetry"];
-      dataColors = ["rgba(255,255,255,0.1)"];
+      dataColors = ["#E2E8F0"];
     }
 
     if (policyChartInstance) {
@@ -714,22 +721,22 @@ function renderDashboardCharts(spendData, eventCounts) {
           data: dataVals,
           backgroundColor: dataColors,
           borderWidth: 2,
-          borderColor: "#0c1020",
+          borderColor: "#FFFFFF",
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: "bottom", labels: { color: "#9ca3af", font: { family: "Outfit", size: 9 }, boxWidth: 10 } }
+          legend: { position: "bottom", labels: { color: "#0F172A", font: { family: "'Crete Round', serif", size: 10 }, boxWidth: 12 } }
         },
-        cutout: "70%"
+        cutout: "68%"
       }
-    });
   }
 }
 
 // Drawer Side Modal Controls
+
 function openDrawerByIndex(idx) {
   const log = currentAuditLogs[idx];
   if (!log) return;
