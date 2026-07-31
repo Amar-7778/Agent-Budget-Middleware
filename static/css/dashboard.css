@@ -1,27 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Crete+Round:ital@0;1&family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --font-heading: 'Crete Round', 'Outfit', Georgia, serif;
+  --font-heading: 'Crete Round', Georgia, serif;
   --font-body: 'Crete Round', 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Pure Soft Light Blue & White Palette */
-  --bg-main: #F0F9FF;        /* Soft ultra-light sky blue background */
-  --bg-surface: #FFFFFF;     /* Crisp clean white card background */
-  --bg-sidebar: #E0F2FE;     /* Light sky blue sidebar background */
+  /* Very Lite Blue & Pure White Theme */
+  --bg-main: #F4F9FF;        /* Very light ice blue background */
+  --bg-surface: #FFFFFF;     /* Pure crisp white card background */
+  --bg-sidebar: #EBF8FF;     /* Very light powder blue sidebar background */
   --border-color: #BAE6FD;   /* Soft light blue border */
-  --border-focus: #0284C7;   /* Deep ocean/sky blue focus ring */
+  --border-focus: #0284C7;   /* Ice sky blue focus ring */
 
-  --text-primary: #0F172A;   /* Rich navy dark text for ultra contrast */
-  --text-secondary: #334155; /* Slate navy text */
+  --text-primary: #0F172A;   /* Crisp slate navy dark text */
+  --text-secondary: #334155; /* Slate blue text */
   --text-muted: #64748B;     /* Muted slate text */
   --text-inverse: #FFFFFF;
 
-  --primary: #0284C7;        /* Sky / Ocean Blue Primary */
-  --primary-hover: #0369A1;  /* Darker Sky Blue Hover */
-  --primary-light: #E0F2FE;  /* Light Sky Blue Highlight */
+  --primary: #0284C7;        /* Sky Blue Primary */
+  --primary-hover: #0369A1;  /* Deeper Sky Blue */
+  --primary-light: #E0F2FE;  /* Very Light Blue Highlight */
 
-  /* 100% Soft Pastel Colors for Badges & Alerts */
+  /* 100% Soft Pastel Status Colors */
   --success: #047857;
   --success-bg: #ECFDF5;
   --warning: #B45309;
@@ -33,9 +33,9 @@
   --pause: #6D28D9;
   --pause-bg: #F5F3FF;
 
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
-  --shadow-md: 0 4px 14px -2px rgba(2, 132, 199, 0.12), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 10px 30px -4px rgba(2, 132, 199, 0.18), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 2px 6px rgba(2, 132, 199, 0.06);
+  --shadow-md: 0 6px 16px rgba(2, 132, 199, 0.1);
+  --shadow-lg: 0 12px 28px rgba(2, 132, 199, 0.15);
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -130,7 +130,7 @@ h1, h2, h3, h4, h5, h6, .brand-text h1, .header-title h2, .card-title, .card-val
   background: linear-gradient(135deg, #0284C7, #0369A1);
   color: #ffffff;
   font-weight: 600;
-  box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3);
+  box-shadow: 0 4px 15px rgba(2, 132, 199, 0.25);
 }
 
 .nav-item svg {
@@ -144,6 +144,7 @@ h1, h2, h3, h4, h5, h6, .brand-text h1, .header-title h2, .card-title, .card-val
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  background-color: var(--bg-main);
 }
 
 .header {
@@ -420,7 +421,7 @@ h1, h2, h3, h4, h5, h6, .brand-text h1, .header-title h2, .card-title, .card-val
 
 .btn-primary:hover {
   background: linear-gradient(135deg, #0369A1, #075985);
-  box-shadow: 0 4px 18px rgba(2, 132, 199, 0.4);
+  box-shadow: 0 4px 18px rgba(2, 132, 199, 0.35);
   transform: translateY(-1px);
 }
 
@@ -487,7 +488,7 @@ tr.clickable-row:hover {
 .drawer-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.3);
+  background-color: rgba(15, 23, 42, 0.25);
   backdrop-filter: blur(2px);
   z-index: 998;
   opacity: 0;
