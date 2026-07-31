@@ -295,7 +295,7 @@
         </div>
 
         <div class="card" style="margin-top: 2rem;">
-          <h3 style="font-family: 'Outfit'; margin-bottom: 1.25rem; font-size: 1.15rem; color: #fff;">Start Active Session Budget Cap</h3>
+          <h3 style="font-family: 'Crete Round'; margin-bottom: 1.25rem; font-size: 1.15rem; color: var(--text-primary);">Start Active Session Budget Cap</h3>
           <form id="form-create-session" onsubmit="handleCreateSession(event)" style="display: flex; gap: 1rem; align-items: flex-end;">
             <div class="form-group" style="flex: 1; margin: 0;">
               <label>Agent ID (UUID)</label>
@@ -352,19 +352,19 @@
 
           <!-- Live Gate Result -->
           <div class="card">
-            <h3 style="font-family: 'Outfit'; margin-bottom: 1rem; font-size: 1.1rem; color: #fff;">Live Gate Evaluation Output</h3>
+            <h3 style="font-family: 'Crete Round'; margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-primary);">Live Gate Evaluation Output</h3>
             <div id="chat-result-box" style="display: none;">
               <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; align-items: center;">
                 <span id="chat-event-badge" class="badge">ALLOW</span>
                 <span id="chat-model-badge" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">llama-3.3-70b-versatile</span>
               </div>
-              <div style="margin-bottom: 1rem; padding: 0.85rem; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.9rem;">
+              <div style="margin-bottom: 1rem; padding: 0.85rem; background: #F8FAFC; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.9rem;">
                 <strong>Response:</strong>
                 <p id="chat-response-text" style="margin-top: 0.3rem;"></p>
               </div>
               <div style="font-size: 0.8rem; color: var(--text-secondary);">
-                <span>Cost: <strong id="chat-cost" style="color: #fff;">$0.00</strong></span> |
-                <span>Tokens: <strong id="chat-tokens" style="color: #fff;">0 in / 0 out</strong></span>
+                <span>Cost: <strong id="chat-cost" style="color: var(--text-primary);">$0.00</strong></span> |
+                <span>Tokens: <strong id="chat-tokens" style="color: var(--text-primary);">0 in / 0 out</strong></span>
               </div>
             </div>
             <div id="chat-result-placeholder" style="color: var(--text-muted); font-size: 0.9rem;">
@@ -378,7 +378,7 @@
         <div class="card">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <div>
-              <h3 style="font-family: 'Outfit'; font-size: 1.1rem; color: #fff;">Spend Event Audit Stream</h3>
+              <h3 style="font-family: 'Crete Round'; font-size: 1.1rem; color: var(--text-primary);">Spend Event Audit Stream</h3>
               <p style="font-size: 0.8rem; color: var(--text-muted);">Click any row to open the full inspection side drawer.</p>
             </div>
             <button class="btn btn-secondary" onclick="loadAuditLogs()">Refresh Stream</button>
@@ -407,10 +407,10 @@
 
       <!-- TAB DEMO: DEMO SCENARIO STUDIO -->
       <section id="panel-demo" class="tab-panel">
-        <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(12, 16, 32, 0.9), rgba(5, 7, 15, 0.9)); border: 1px solid var(--border-color);">
+        <div class="card" style="margin-bottom: 2rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
             <div>
-              <h3 style="font-family: 'Outfit'; font-size: 1.25rem; margin-bottom: 0.4rem; color: #fff;">Production Multi-Agent Governance Demo Generator</h3>
+              <h3 style="font-family: 'Crete Round'; font-size: 1.25rem; margin-bottom: 0.4rem; color: var(--text-primary);">Production Multi-Agent Governance Demo Generator</h3>
               <p style="font-size: 0.88rem; color: var(--text-secondary); max-width: 650px;">
                 Provision a multi-agent scenario and fire real concurrent traffic (via <code>asyncio.gather</code>) to show every outcome (<strong>ALLOW</strong>, <strong>WARN</strong>, <strong>BLOCK</strong>, <strong>REROUTE</strong>, <strong>PAUSE</strong>) live, backed by real Groq calls and atomic Redis/Postgres state.
               </p>
@@ -437,9 +437,10 @@
         <!-- Demo Summary Table -->
         <div id="demo-results-card" class="card" style="margin-bottom: 2rem; display: none;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h3 style="font-family: 'Outfit'; font-size: 1.1rem; color: #fff;">Live Enforcement Outcomes & Summary Table</h3>
-            <span id="demo-duration-badge" class="badge" style="background: rgba(255,255,255,0.05); color: #fff;">Duration: 0.0s</span>
+            <h3 style="font-family: 'Crete Round'; font-size: 1.1rem; color: var(--text-primary);">Live Enforcement Outcomes & Summary Table</h3>
+            <span id="demo-duration-badge" class="badge badge-reroute">Duration: 0.0s</span>
           </div>
+
 
           <div class="table-container">
             <table>

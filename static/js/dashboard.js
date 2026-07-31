@@ -152,10 +152,11 @@ async function loadDashboardMetrics() {
           </div>
           <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.4rem; text-align: right;">${pct.toFixed(1)}% Used</div>
           <div id="unpause-btn-container-${agent.agent_id}" style="margin-top: 0.85rem; display: none;">
-            <button class="btn btn-primary" onclick="triggerUnpauseAgent('${agent.agent_id}')" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; width: 100%; border-radius: var(--radius-sm); background: linear-gradient(135deg, var(--pause), #6d28d9);">
-              🔓 Resume Agent (Clear Loop Pause)
+            <button class="btn btn-primary" onclick="triggerUnpauseAgent('${agent.agent_id}')" style="padding: 0.45rem 0.85rem; font-size: 0.825rem; width: 100%; border-radius: var(--radius-sm);">
+              Resume Agent (Clear Loop Pause)
             </button>
           </div>
+
         </div>
       `;
 
@@ -226,8 +227,9 @@ function updateThreatBanner(agentStatus) {
             <p>Spend of $${agent.current_spend_usd.toFixed(4)} exceeds runaway rate limit (>20% monthly budget of $${agent.monthly_budget_usd.toFixed(2)} in 1 hour)</p>
           </div>
           <button class="btn btn-secondary" onclick="triggerUnpauseAgent('${agent.agent_id}')" style="padding: 0.35rem 0.85rem; font-size: 0.75rem;">
-            🔓 Operator Unpause
+            Operator Unpause
           </button>
+
         </div>
       `;
     }
