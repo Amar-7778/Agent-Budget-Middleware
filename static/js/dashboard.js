@@ -734,8 +734,10 @@ function renderDashboardCharts(spendData, eventCounts) {
         },
         cutout: "68%"
       }
-    }
+    });
+  }
 }
+
 
   // Drawer Side Modal Controls
 
