@@ -28,6 +28,11 @@ htmlcov/
 *.swp
 *.swo
 
+# Node & React
+node_modules/
+frontend/node_modules/
+dist/
+
 # OS Metadata
 .DS_Store
 Thumbs.db

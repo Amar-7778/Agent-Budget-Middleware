@@ -58,6 +58,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+#root {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
 h1, h2, h3, h4, h5, h6, .brand-text h1, .header-title h2, .card-title, .card-val {
   font-family: var(--font-heading);
 }
@@ -204,14 +210,6 @@ h1, h2, h3, h4, h5, h6, .brand-text h1, .header-title h2, .card-title, .card-val
   padding: 2.5rem;
   flex: 1;
   max-width: 1550px;
-}
-
-.tab-panel {
-  display: none;
-}
-
-.tab-panel.active {
-  display: block;
 }
 
 /* Cards & Layout Grid */

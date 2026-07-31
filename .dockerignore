@@ -14,3 +14,6 @@ htmlcov/
 alembic/versions/__pycache__/
 alembic/versions/*.pyc
 *.log
+node_modules
+frontend/node_modules
+
