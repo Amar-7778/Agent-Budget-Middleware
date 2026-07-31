@@ -179,8 +179,13 @@ import os
 from fastapi.staticfiles import StaticFiles
 
 STATIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static"))
+ASSETS_DIR = os.path.join(STATIC_DIR, "assets")
+
 if os.path.exists(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+if os.path.exists(ASSETS_DIR):
+    app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
+
 
 # Register route routers
 app.include_router(ui_router)
