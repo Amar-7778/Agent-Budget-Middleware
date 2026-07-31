@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function ApiConsole() {
+export default function ApiConsole({ showAlert }) {
   const [selectedEndpoint, setSelectedEndpoint] = useState('HEALTH_LIVE');
   const [requestBody, setRequestBody] = useState('');
   const [showBodyInput, setShowBodyInput] = useState(false);
@@ -69,7 +69,7 @@ export default function ApiConsole() {
       curl += ` -H "Content-Type: application/json" -d '${requestBody.replace(/\n/g, '')}'`;
     }
     navigator.clipboard.writeText(curl);
-    alert('cURL command copied to clipboard!');
+    if (showAlert) showAlert('cURL Copied', 'cURL command copied to clipboard!');
   };
 
   return (

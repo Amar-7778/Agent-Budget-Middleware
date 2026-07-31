@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Sandbox({ auditLogs, onRefresh, onSelectAuditLog }) {
+export default function Sandbox({ auditLogs, onRefresh, onSelectAuditLog, showAlert }) {
   const [sessionId, setSessionId] = useState('');
   const [agentId, setAgentId] = useState('');
   const [promptMsg, setPromptMsg] = useState('');
@@ -83,7 +83,7 @@ export default function Sandbox({ auditLogs, onRefresh, onSelectAuditLog }) {
       setChatResult({ ok: chatRes.ok, data: chatData });
       if (onRefresh) onRefresh();
     } catch (err) {
-      alert('Preset simulation failed: ' + err.message);
+      if (showAlert) showAlert('Preset Simulation Error', err.message);
     }
   };
 
@@ -211,7 +211,7 @@ export default function Sandbox({ auditLogs, onRefresh, onSelectAuditLog }) {
 
       {/* Audit Stream Table */}
       <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', justify: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <div>
             <h3 style={{ fontFamily: 'Crete Round', fontSize: '1.1rem', color: 'var(--text-primary)' }}>Spend Event Audit Stream</h3>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Click any row to open the full inspection side drawer.</p>

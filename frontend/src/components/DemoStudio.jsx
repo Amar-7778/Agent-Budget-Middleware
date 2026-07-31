@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Play, Trash2, CheckCircle2 } from 'lucide-react';
 
-export default function DemoStudio({ onRefresh }) {
+export default function DemoStudio({ onRefresh, showAlert, showConfirm }) {
   const [loading, setLoading] = useState(false);
   const [demoData, setDemoData] = useState(null);
 
@@ -26,25 +26,32 @@ export default function DemoStudio({ onRefresh }) {
       setDemoData(data);
       if (onRefresh) onRefresh();
     } catch (err) {
-      alert('Error running demo scenario: ' + err.message);
+      if (showAlert) showAlert('Demo Execution Error', err.message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleCleanupDemo = async () => {
-    if (!confirm('Are you sure you want to delete all demo scenario data?')) return;
+    const confirmed = await showConfirm(
+      'Clean Up Demo Scenario Data',
+      'Are you sure you want to delete all demo scenario data, reset agent budgets, and clear active test sessions?',
+      'Delete Demo Data',
+      'Cancel'
+    );
+    if (!confirmed) return;
+
     try {
       const res = await fetch('/demo/cleanup', { method: 'DELETE' });
       if (res.ok) {
-        alert('Demo scenario data cleaned up successfully!');
+        if (showAlert) showAlert('Cleanup Complete', 'Demo scenario data has been cleaned up successfully!');
         setDemoData(null);
         if (onRefresh) onRefresh();
       } else {
-        alert('Error cleaning up demo scenario.');
+        if (showAlert) showAlert('Error', 'Failed to clean up demo scenario data.');
       }
     } catch (err) {
-      alert('Network error during cleanup.');
+      if (showAlert) showAlert('Network Error', 'Network error during cleanup operation.');
     }
   };
 

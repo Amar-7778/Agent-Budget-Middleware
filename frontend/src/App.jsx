@@ -7,6 +7,7 @@ import Sandbox from './components/Sandbox';
 import DemoStudio from './components/DemoStudio';
 import ApiConsole from './components/ApiConsole';
 import AuditDrawer from './components/AuditDrawer';
+import ThemeModal from './components/ThemeModal';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('command');
@@ -14,6 +15,45 @@ export default function App() {
   const [auditLogs, setAuditLogs] = useState([]);
   const [activeRunaways, setActiveRunaways] = useState(new Set());
   const [selectedAuditLog, setSelectedAuditLog] = useState(null);
+
+  // Modal State
+  const [modalState, setModalState] = useState({ isOpen: false });
+
+  const showAlert = (title, message) => {
+    return new Promise((resolve) => {
+      setModalState({
+        isOpen: true,
+        type: 'alert',
+        title,
+        message,
+        onClose: () => {
+          setModalState({ isOpen: false });
+          resolve();
+        }
+      });
+    });
+  };
+
+  const showConfirm = (title, message, confirmText = 'Confirm', cancelText = 'Cancel') => {
+    return new Promise((resolve) => {
+      setModalState({
+        isOpen: true,
+        type: 'confirm',
+        title,
+        message,
+        confirmText,
+        cancelText,
+        onConfirm: () => {
+          setModalState({ isOpen: false });
+          resolve(true);
+        },
+        onCancel: () => {
+          setModalState({ isOpen: false });
+          resolve(false);
+        }
+      });
+    });
+  };
 
   const fetchSpendMetrics = async () => {
     try {
@@ -62,18 +102,25 @@ export default function App() {
   };
 
   const handleUnpauseAgent = async (agentId) => {
-    if (!confirm(`Are you sure you want to unpause Agent ID ${agentId}?`)) return;
+    const confirmed = await showConfirm(
+      'Resume Agent Execution',
+      `Are you sure you want to clear loop pause and unpause Agent ID: ${agentId}?`,
+      'Resume Agent',
+      'Keep Paused'
+    );
+    if (!confirmed) return;
+
     try {
       const res = await fetch(`/budgets/agents/${agentId}/unpause`, { method: 'POST' });
       if (res.ok) {
         const data = await res.json();
-        alert(data.message);
+        showAlert('Agent Unpaused', data.message);
         refreshAllData();
       } else {
-        alert('Error unpausing agent.');
+        showAlert('Action Failed', 'Error unpausing agent.');
       }
     } catch (err) {
-      alert('Network error unpausing agent.');
+      showAlert('Network Error', 'Network error occurred while unpausing agent.');
     }
   };
 
@@ -98,25 +145,37 @@ export default function App() {
             />
           )}
           {activeTab === 'console' && (
-            <PolicyManager spendData={spendData} onRefresh={refreshAllData} />
+            <PolicyManager
+              spendData={spendData}
+              onRefresh={refreshAllData}
+              showAlert={showAlert}
+            />
           )}
           {activeTab === 'sandbox' && (
             <Sandbox
               auditLogs={auditLogs}
               onRefresh={refreshAllData}
               onSelectAuditLog={setSelectedAuditLog}
+              showAlert={showAlert}
             />
           )}
           {activeTab === 'demo' && (
-            <DemoStudio onRefresh={refreshAllData} />
+            <DemoStudio
+              onRefresh={refreshAllData}
+              showAlert={showAlert}
+              showConfirm={showConfirm}
+            />
           )}
           {activeTab === 'api-explorer' && (
-            <ApiConsole />
+            <ApiConsole showAlert={showAlert} />
           )}
         </main>
       </div>
 
       <AuditDrawer auditLog={selectedAuditLog} onClose={() => setSelectedAuditLog(null)} />
+
+      {/* Theme Modal Dialog */}
+      <ThemeModal modalState={modalState} onClose={() => setModalState({ isOpen: false })} />
     </>
   );
 }

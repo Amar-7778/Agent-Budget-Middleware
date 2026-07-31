@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function PolicyManager({ spendData, onRefresh }) {
+export default function PolicyManager({ spendData, onRefresh, showAlert }) {
   const [teamName, setTeamName] = useState('');
   const [teamBudget, setTeamBudget] = useState('');
 
@@ -25,15 +25,15 @@ export default function PolicyManager({ spendData, onRefresh }) {
       });
       if (res.ok) {
         const data = await res.json();
-        alert(`Team Policy Created!\nTeam ID: ${data.id}`);
+        showAlert('Team Policy Created', `Team ID: ${data.id}\nMonthly Budget Cap: $${parseFloat(teamBudget).toFixed(2)}`);
         setTeamName('');
         setTeamBudget('');
         if (onRefresh) onRefresh();
       } else {
-        alert('Error creating team policy.');
+        showAlert('Error', 'Failed to create team policy.');
       }
     } catch (err) {
-      alert('Network error creating team.');
+      showAlert('Network Error', 'Network error creating team.');
     }
   };
 
@@ -53,16 +53,16 @@ export default function PolicyManager({ spendData, onRefresh }) {
       });
       if (res.ok) {
         const data = await res.json();
-        alert(`Agent Policy Created!\nAgent ID: ${data.id}`);
+        showAlert('Agent Policy Created', `Agent ID: ${data.id}\nMonthly Budget: $${parseFloat(agentBudget).toFixed(2)}\nPreferred: ${agentPrefModel}\nFallback: ${agentFallModel}`);
         setAgentTeamId('');
         setAgentName('');
         setAgentBudget('');
         if (onRefresh) onRefresh();
       } else {
-        alert('Error creating agent policy.');
+        showAlert('Error', 'Failed to create agent policy.');
       }
     } catch (err) {
-      alert('Network error creating agent.');
+      showAlert('Network Error', 'Network error creating agent.');
     }
   };
 
@@ -79,15 +79,15 @@ export default function PolicyManager({ spendData, onRefresh }) {
       });
       if (res.ok) {
         const data = await res.json();
-        alert(`Session Started!\nSession ID: ${data.id}`);
+        showAlert('Session Started', `Session ID: ${data.id}\nSpend Cap: $${parseFloat(sessBudget).toFixed(2)} USD`);
         setSessAgentId('');
         setSessBudget('');
         if (onRefresh) onRefresh();
       } else {
-        alert('Error starting session.');
+        showAlert('Error', 'Failed to start active session.');
       }
     } catch (err) {
-      alert('Network error starting session.');
+      showAlert('Network Error', 'Network error starting session.');
     }
   };
 
